@@ -1,34 +1,29 @@
-class Kalc::Transform < Parslet::Transform
-  rule(:number => simple(:number)) { Float(number) }
-  
-  rule(:left => simple(:left), :right => simple(:right), :operator => '&&') { left && right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '||') { left || right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '<=') { left <= right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '>=') { left >= right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '==') { left == right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '!=') { left != right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '-') { left - right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '+') { left + right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '*') { left * right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '/') { left / right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '%') { left % right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '<') { left < right }
-  rule(:left => simple(:left), :right => simple(:right), :operator => '>') { left > right }
+module Kalc
 
-  rule(:condition => simple(:condition), :true => simple(:true_cond), :false => simple(:false_cond)) { 
-    condition ? true_cond : false_cond
-  }
+  class Transform < Parslet::Transform
+    rule(:number => simple(:number)) { 
+      Ast::FloatingPointNumber.new(number) 
+    }
 
-  rule(:variable => simple(:variable)) {
+    rule(:left => simple(:left), :right => simple(:right), :operator => simple(:operator)) { 
+      Ast::Arithmetic.new(left, right, operator)
+    }
 
-  }
+    rule(:condition => simple(:condition), :true => simple(:true_cond), :false => simple(:false_cond)) { 
+      Ast::Conditional.new(condition, true_cond, false_cond)
+    }
 
-  rule(:assign => {:value => simple(:value), :identifier => simple(:identifier)}) {
+    rule(:variable => simple(:variable)) {
+      Ast::Variable.new(variable) 
+    }
 
-  }
+    rule(:assign => {:value => simple(:value), :identifier => simple(:identifier)}) {
+      Ast::Identifier.new(identifier, value)
+    }
 
-  rule(:function_definition => {:name => simple(:name),
-       :argument_list => sequence(:argument_list)}) {
-  }
+    rule(:function_call => {:name => simple(:name),
+         :argument_list => sequence(:argument_list)}) {
+      Ast::FunctionCall.new(name, argument_list)
+    }
+  end
 end
-
