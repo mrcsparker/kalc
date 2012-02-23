@@ -50,4 +50,9 @@ describe Kalc::Transform do
     it { ts.apply(grammar.parse("2 < 2")).should == false }
   end
 
+  context "AND statement" do
+    it { p grammar.parse("AND(3 > 2, 1 < 3)") }
+    it { ts.apply(grammar.parse("AND(3 > 2, 1 < 3)")).should == true }
+  end
+
 end

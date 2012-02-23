@@ -85,17 +85,31 @@ class Kalc::Grammar < Parslet::Parser
     (digits >> (str('.') >> digits).maybe).as(:number)
   }
 
+  rule(:identifier) {
+    (alpha >> (alpha | digit).repeat) >> spaces?
+  }
+
+  # Should look like 'Name'
+  rule(:variable) {
+    (str("'") >> identifier >> str("'")).as(:variable) >> spaces?
+  }
+
   rule(:block) {
     left_paren >> expression >> right_paren
   }
 
-  rule(:primary) {
-    block | number >> spaces?
+  rule(:primary_expression) {
+    variable | block | number >> spaces?
+  }
+
+
+  rule(:argument_expression_list) {
+    ((expression >> (comma >> expression).repeat)).as(:argument_list)
   }
 
   rule(:multiplicative_expression) {
-    primary.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
-    primary
+    primary_expression.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
+    primary_expression
   }
 
   rule(:additive_expression) {
@@ -133,36 +147,21 @@ class Kalc::Grammar < Parslet::Parser
     expression.as(:false) | logical_or_expression
   }
 
-  rule(:argument_list) {
-    expression >> (comma >> argument_list).repeat
+  rule(:function_call) {
+    (identifier.as(:name) >> left_paren >> argument_expression_list >> right_paren).as(:function_call) | conditional_expression
   }
 
-  rule(:and_statement) {
-    and_keyword >>
-    left_paren >>
-    argument_list >>
-    right_paren | conditional_expression
-  }
-
-  rule(:or_statement) {
-    or_keyword >>
-    left_paren >>
-    argument_list >>
-    right_paren | and_statement
-  }
-
-  rule(:if_statement) {
-    if_keyword >>
-    left_paren >> 
-    expression.as(:condition) >> comma >>
-    expression.as(:true) >> comma >>
-    expression.as(:false) >> right_paren | or_statement
+  rule(:assignment_expression) {
+    (variable.as(:identifier) >>
+      assign >> 
+      function_call.as(:value)).as(:assign) | function_call
   }
 
   # Start here
   rule(:expression) {
-    if_statement
+    assignment_expression
   }
 
   root :expression
 end
+
