@@ -47,7 +47,7 @@ describe Kalc::Grammar do
     it { grammar.should_not parse("|| 1") }
   end
 
-  context "Comparison" do
+  context "Comparison expressions" do
     it { grammar.should parse("3 > 1") }
     it { grammar.should parse("3 < 1") }
     it { grammar.should parse("3 >= 1") }
