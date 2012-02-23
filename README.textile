@@ -1,0 +1,10 @@
+h1. kalc
+
+h2. Introduction
+
+Small calculation language.  Based a bit on Excel's formula language.
+
+h2. Contributing
+
+Fork on GitHub and after you've committed tested patches, send a pull request.
+
