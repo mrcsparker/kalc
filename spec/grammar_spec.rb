@@ -82,10 +82,23 @@ describe Kalc::Grammar do
     it { grammar.should parse("3 > 2 ? 1 : 5 > 4 ? 7 : 5") }
   end
 
+  context "AND statements" do
+    it { grammar.should parse("AND(1, 2, 3)") }
+    it { grammar.should parse("AND(1, 2, 3, 4, 5, 6)") }
+    it { grammar.should parse("AND(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)") }
+  end
+
+  context "OR statements" do
+    it { grammar.should parse("OR(1, 2, 3)") }
+    it { grammar.should parse("OR(1, 2, 3, 4, 5, 6)") }
+    it { grammar.should parse("OR(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)") }
+  end
+
   context "IF statements" do
     it { grammar.should parse("IF(3, 2, 1)") }
     it { grammar.should parse("IF(3 > 1, 2, 1)") }
     it { grammar.should parse("IF((3 > 1) || (2 < 1), 2, 1)") }
+    it { grammar.should parse("IF(OR(1 > 3, 2 < 5), 3, 2)") }
   end
 
   context "Nested IF statements" do

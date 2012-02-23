@@ -77,8 +77,9 @@ class Kalc::Grammar < Parslet::Parser
             :less => '<',
             :greater => '>'
 
+  rule(:and_keyword) { str('AND') }
+  rule(:or_keyword) { str('OR') }
   rule(:if_keyword) { str('IF') }
-  rule(:or_keyword) { str('IF') }
 
   rule(:number) {
     (digits >> (str('.') >> digits).maybe).as(:number)
@@ -132,12 +133,30 @@ class Kalc::Grammar < Parslet::Parser
     expression.as(:false) | logical_or_expression
   }
 
+  rule(:argument_list) {
+    expression >> (comma >> argument_list).repeat
+  }
+
+  rule(:and_statement) {
+    and_keyword >>
+    left_paren >>
+    argument_list >>
+    right_paren | conditional_expression
+  }
+
+  rule(:or_statement) {
+    or_keyword >>
+    left_paren >>
+    argument_list >>
+    right_paren | and_statement
+  }
+
   rule(:if_statement) {
     if_keyword >>
     left_paren >> 
     expression.as(:condition) >> comma >>
     expression.as(:true) >> comma >>
-    expression.as(:false) >> right_paren | conditional_expression
+    expression.as(:false) >> right_paren | or_statement
   }
 
   # Start here
