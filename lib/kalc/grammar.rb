@@ -1,5 +1,8 @@
 # Started with https://github.com/postmodern/cparser code
+# which is based on http://www.lysator.liu.se/c/ANSI-C-grammar-y.html
 # and worked from there
+# 
+# The second link really helped when it came to functions
 
 class Kalc::Grammar < Parslet::Parser
 
@@ -82,7 +85,7 @@ class Kalc::Grammar < Parslet::Parser
   rule(:if_keyword) { str('IF') }
 
   rule(:number) {
-    (digits >> (str('.') >> digits).maybe).as(:number)
+    (digits >> (str('.') >> digits).maybe).as(:number) >> spaces?
   }
 
   rule(:identifier) {
@@ -121,7 +124,11 @@ class Kalc::Grammar < Parslet::Parser
   # Atoms can self-evaluate
   # This where the grammar starts
   rule(:atom) {
-    variable.as(:variable) | number >> spaces? | paren_expression
+    variable.as(:variable) | number | paren_expression
+  }
+
+  rule(:function_call_expression) {
+    (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) | atom
   }
 
   rule(:paren_expression) {
@@ -129,8 +136,8 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:multiplicative_expression) {
-    atom.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
-    atom
+    function_call_expression.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
+    function_call_expression
   }
 
   rule(:additive_expression) {
@@ -168,19 +175,15 @@ class Kalc::Grammar < Parslet::Parser
     expression.as(:false) | logical_or_expression
   }
 
-  rule(:function_call_expression) {
-    (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) | conditional_expression
-  }
-
   rule(:assignment_expression) {
     (variable.as(:identifier) >>
       assign >>
-      function_call_expression).as(:assign) | function_call_expression
+      function_call_expression.as(:value)).as(:assign) | conditional_expression
   }
 
   # Start here
   rule(:expression) {
-    function_call_expression
+    assignment_expression
   }
 
   root :expression
