@@ -14,10 +14,10 @@ module Kalc
     }
 
     rule(:variable => simple(:variable)) {
-      Ast::Variable.new(variable) 
+      Ast::Variable.new(variable)
     }
 
-    rule(:assign => {:value => simple(:value), :identifier => simple(:identifier)}) {
+    rule(:assign => {:value => simple(:value), :identifier => simple(:identifier), :operator => simple(:operator)}) {
       Ast::Identifier.new(identifier, value)
     }
 

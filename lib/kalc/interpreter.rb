@@ -29,7 +29,8 @@ module Kalc
       end
     end
 
-    def run
+    def run(ast = nil)
+      @ast = ast if ast
       @ast.eval(@env)
     end
 

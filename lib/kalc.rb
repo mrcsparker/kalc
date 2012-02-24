@@ -6,6 +6,7 @@ require 'kalc/ast'
 require 'kalc/transform'
 require 'kalc/environment'
 require 'kalc/interpreter'
+require 'kalc/repl'
 
 module Kalc
 

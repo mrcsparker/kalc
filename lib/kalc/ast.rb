@@ -78,12 +78,12 @@ module Kalc
       attr_reader :value
 
       def initialize(identifier, value)
-        @variable = identifier
+        @variable = identifier.to_s.strip
         @value = value
       end
 
       def eval(context)
-        context.add_variable(@variable, @value)
+        context.add_variable(@variable, @value.eval(context))
       end
     end
 

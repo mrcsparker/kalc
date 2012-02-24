@@ -91,7 +91,7 @@ class Kalc::Grammar < Parslet::Parser
 
   # Should look like 'Name'
   rule(:variable) {
-    (str("'") >> identifier >> str("'")).as(:variable) >> spaces?
+    (str("'") >> identifier >> str("'")) >> spaces?
   }
 
   rule(:block) {
@@ -99,7 +99,7 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:primary_expression) {
-    variable | block | number >> spaces?
+    variable.as(:variable) | block | number >> spaces?
   }
 
 
