@@ -11,12 +11,11 @@ module Kalc
 
       @env = Environment.new do |env|
 
-        env.add_function(:IF, lambda { |cxt, *args|
+        env.add_function(:IF, lambda { |cxt, args|
           args[0].eval(cxt) ? args[1].eval(cxt) : args[2].eval(cxt)
         })
 
-        env.add_function(:OR, lambda { |cxt, *args|
-          args = to_array(args)
+        env.add_function(:OR, lambda { |cxt, args|
           retval = false
           args.each do |arg|
             if arg.eval(cxt) == true
@@ -27,8 +26,7 @@ module Kalc
           retval
         })
 
-        env.add_function(:AND, lambda { |cxt, *args|
-          args = to_array(args)
+        env.add_function(:AND, lambda { |cxt, args|
           retval = true
           args.each do |arg|
             if arg.eval(cxt) == false
@@ -40,8 +38,7 @@ module Kalc
         })
 
         # Math
-        env.add_function(:COS, lambda { |cxt, *args|
-          args = to_array(args)
+        env.add_function(:COS, lambda { |cxt, args|
           Math.cos(args.first.eval(cxt))
         })
       end
@@ -50,12 +47,6 @@ module Kalc
     def run(ast = nil)
       @ast = ast if ast
       @ast.eval(@env)
-    end
-
-    private
-    def to_array(*arr)
-      arr = [arr] unless arr.is_a?(Array)
-      arr
     end
   end
 end

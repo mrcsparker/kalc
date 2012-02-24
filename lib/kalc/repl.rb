@@ -1,8 +1,15 @@
 require 'readline'
 require 'pp'
 
+require 'parslet/convenience'
+
 module Kalc
   class Repl
+
+    CLIST = [
+      'quit', 'exit', 'functions', 'variables', 'ast'
+    ].sort
+
     def run
 
       puts heading
@@ -22,6 +29,10 @@ module Kalc
       ast = nil
 
       begin
+        comp = proc { |s| CLIST.grep( /^#{Regexp.escape(s)}/ ) }
+        Readline.completion_append_character = ""
+        Readline.completion_proc = comp
+        
         while input = Readline.readline("kalc-#{Kalc::VERSION} > ", true)
           begin
             case
@@ -34,10 +45,12 @@ module Kalc
             when input == 'ast'
               pp ast
             when input != ""
-              g = @grammar.parse(input)
+              g = @grammar.parse_with_debug(input)
               ast = @transform.apply(g)
               puts @interpreter.run(ast)
             end
+          rescue Parslet::ParseFailed => e
+            puts e, g.root.error_tree
           rescue Exception => e
             puts e
             puts e.backtrace

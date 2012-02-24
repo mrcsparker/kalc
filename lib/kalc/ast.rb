@@ -109,7 +109,7 @@ module Kalc
 
       def eval(context)
         to_call = context.get_function(@name)
-        to_call.call(@name, *@argument_list)
+        to_call.call(@name, @argument_list)
       end
     end
 

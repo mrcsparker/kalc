@@ -102,9 +102,12 @@ class Kalc::Grammar < Parslet::Parser
     variable.as(:variable) | block | number >> spaces?
   }
 
-
   rule(:argument_expression_list) {
-    ((expression >> (comma >> expression).repeat)).as(:argument_list)
+    expression >> (comma >> expression).repeat(0,1)
+  }
+
+  rule(:argument_expression_block_list) {
+    (left_paren >> argument_expression_list.repeat >> right_paren).as(:block_list)
   }
 
   rule(:multiplicative_expression) {
@@ -148,7 +151,7 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:function_call) {
-    (identifier.as(:name) >> left_paren >> argument_expression_list >> right_paren).as(:function_call) | conditional_expression
+    (identifier.as(:name) >> argument_expression_block_list.as(:argument_list)).as(:function_call) | conditional_expression
   }
 
   rule(:assignment_expression) {
@@ -159,7 +162,7 @@ class Kalc::Grammar < Parslet::Parser
 
   # Start here
   rule(:expression) {
-    assignment_expression
+    assignment_expression | additive_expression | variable | block
   }
 
   root :expression

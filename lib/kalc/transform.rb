@@ -21,6 +21,14 @@ module Kalc
       Ast::Identifier.new(identifier, value)
     }
 
+    rule(:block_list => sequence(:block_list)) {
+      block_list
+    }
+
+    rule(:block_list => "()") {
+      []
+    }
+
     rule(:function_call => {:name => simple(:name),
          :argument_list => sequence(:argument_list)}) {
       Ast::FunctionCall.new(name, argument_list)
