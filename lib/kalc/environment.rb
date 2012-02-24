@@ -1,9 +1,12 @@
 module Kalc
   class Environment
+
+    attr_reader :functions
+    attr_reader :variables
+
     def initialize
       @functions = {}
       @variables = {}
-
       yield self if block_given?
     end
 
@@ -13,6 +16,10 @@ module Kalc
 
     def get_function(name)
       @functions[name.to_s]
+    end
+
+    def list_functions
+      @functions
     end
 
     def add_variable(name, value)
