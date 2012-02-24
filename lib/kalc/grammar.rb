@@ -85,7 +85,7 @@ class Kalc::Grammar < Parslet::Parser
   rule(:if_keyword) { str('IF') }
 
   rule(:number) {
-    (digits >> (str('.') >> digits).maybe).as(:number) >> spaces?
+    (match('[+-]').maybe >> digits >> (str('.') >> digits).maybe).as(:number) >> spaces?
   }
 
   rule(:identifier) {
@@ -104,7 +104,7 @@ class Kalc::Grammar < Parslet::Parser
   # Does not self-evaluate
   # Use to call function: FUNCTION_NAME(variable_list, ..)
   rule(:variable_list) {
-    expression >> (comma >> expression).repeat
+    conditional_expression >> (comma >> conditional_expression).repeat
   }
 
   rule(:paren_variable_list) {
@@ -127,58 +127,87 @@ class Kalc::Grammar < Parslet::Parser
     variable.as(:variable) | number | paren_expression
   }
 
-  rule(:function_call_expression) {
-    (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) | atom
-  }
-
+  # (1 + 2)
   rule(:paren_expression) {
-    left_paren >> expression >> right_paren
+    left_paren >> conditional_expression >> right_paren
   }
 
+  # IF(1, 2, 3)
+  # AND(1, 2, ...)
+  rule(:function_call_expression) {
+    (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) |
+    atom
+  }
+
+  # 1 * 2
   rule(:multiplicative_expression) {
-    function_call_expression.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
+    function_call_expression.as(:left) >> 
+      (multiply | divide | modulus) >> 
+      multiplicative_expression.as(:right) |
     function_call_expression
   }
 
+  # 1 + 2
   rule(:additive_expression) {
-    multiplicative_expression.as(:left) >> (add | subtract) >> additive_expression.as(:right) |
+    multiplicative_expression.as(:left) >> 
+      (add | subtract) >> 
+      additive_expression.as(:right) |
     multiplicative_expression
   }
 
+  # 1 < 2
+  # 1 > 2
+  # 1 <= 2
+  # 1 >= 2
   rule(:relational_expression) {
     additive_expression.as(:left) >> 
-    (less | greater | less_equal | greater_equal) >>
-    relational_expression.as(:right) | additive_expression
+      (less | greater | less_equal | greater_equal) >>
+      relational_expression.as(:right) |
+    additive_expression
   }
 
+  # 1 == 2
   rule(:equality_expression) {
     relational_expression.as(:left) >>
-    (equal | not_equal) >>
-    equality_expression.as(:right) | relational_expression
+      (equal | not_equal) >>
+      equality_expression.as(:right) |
+    relational_expression
   }
 
+  # 1 && 2
   rule(:logical_and_expression) {
     equality_expression.as(:left) >>
-    logical_and >>
-    logical_and_expression.as(:right) | equality_expression
+      logical_and >>
+      logical_and_expression.as(:right) |
+    equality_expression
   }
 
+  # 1 || 2
   rule(:logical_or_expression) {
     logical_and_expression.as(:left) >>
-    logical_or >>
-    logical_or_expression.as(:right) | logical_and_expression
+      logical_or >>
+      logical_or_expression.as(:right) |
+    logical_and_expression
   }
 
+  # 1 > 2 ? 3 : 4
   rule(:conditional_expression) {
-    logical_or_expression.as(:condition) >> question_mark >>
-    expression.as(:true) >> colon >>
-    expression.as(:false) | logical_or_expression
+    logical_or_expression.as(:condition) >> 
+      question_mark >> 
+      conditional_expression.as(:true) >> 
+      colon >> 
+      conditional_expression.as(:false) | 
+    logical_or_expression
   }
 
+  # 'a' = 1
+  # We don't allow for nested assignments:
+  # IF('a' = 1, 1, 2)
   rule(:assignment_expression) {
-    (variable.as(:identifier) >>
-      assign >>
-      function_call_expression.as(:value)).as(:assign) | conditional_expression
+    (variable.as(:identifier) >> 
+      assign >> 
+      conditional_expression.as(:value)).as(:assign) |
+    conditional_expression
   }
 
   # Start here
