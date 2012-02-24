@@ -100,16 +100,16 @@ module Kalc
 
     class FunctionCall
       attr_reader :name
-      attr_reader :argument_list
+      attr_reader :variable_list
 
-      def initialize(name, argument_list)
+      def initialize(name, variable_list)
         @name = name
-        @argument_list = argument_list
+        @variable_list = variable_list
       end
 
       def eval(context)
         to_call = context.get_function(@name)
-        to_call.call(@name, @argument_list)
+        to_call.call(context, @variable_list)
       end
     end
 

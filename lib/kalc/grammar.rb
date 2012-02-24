@@ -89,30 +89,48 @@ class Kalc::Grammar < Parslet::Parser
     (alpha >> (alpha | digit).repeat) >> spaces?
   }
 
+  rule(:argument) {
+    identifier.as(:argument)
+  }
+
   # Should look like 'Name'
   rule(:variable) {
     (str("'") >> identifier >> str("'")) >> spaces?
   }
 
-  rule(:block) {
+  # Does not self-evaluate
+  # Use to call function: FUNCTION_NAME(variable_list, ..)
+  rule(:variable_list) {
+    expression >> (comma >> expression).repeat
+  }
+
+  rule(:paren_variable_list) {
+    (left_paren >> variable_list.repeat >> right_paren).as(:paren_list)
+  }
+
+  # Does not self-evaluate
+  # Used to create function: DEF FUNCTION_NAME(argument_list, ..)
+  rule(:argument_list) {
+    argument >> (comma >> argument).repeat
+  }
+
+  rule(:paren_argument_list) {
+    (left_paren >> argument_list.repeat >> right_paren).as(:paren_list)
+  }
+
+  # Atoms can self-evaluate
+  # This where the grammar starts
+  rule(:atom) {
+    variable.as(:variable) | number >> spaces? | paren_expression
+  }
+
+  rule(:paren_expression) {
     left_paren >> expression >> right_paren
   }
 
-  rule(:primary_expression) {
-    variable.as(:variable) | block | number >> spaces?
-  }
-
-  rule(:argument_expression_list) {
-    expression >> (comma >> expression).repeat(0,1)
-  }
-
-  rule(:argument_expression_block_list) {
-    (left_paren >> argument_expression_list.repeat >> right_paren).as(:block_list)
-  }
-
   rule(:multiplicative_expression) {
-    primary_expression.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
-    primary_expression
+    atom.as(:left) >> (multiply | divide | modulus) >> multiplicative_expression.as(:right) |
+    atom
   }
 
   rule(:additive_expression) {
@@ -150,19 +168,19 @@ class Kalc::Grammar < Parslet::Parser
     expression.as(:false) | logical_or_expression
   }
 
-  rule(:function_call) {
-    (identifier.as(:name) >> argument_expression_block_list.as(:argument_list)).as(:function_call) | conditional_expression
+  rule(:function_call_expression) {
+    (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) | conditional_expression
   }
 
   rule(:assignment_expression) {
     (variable.as(:identifier) >>
-      assign >> 
-      function_call.as(:value)).as(:assign) | function_call
+      assign >>
+      function_call_expression).as(:assign) | function_call_expression
   }
 
   # Start here
   rule(:expression) {
-    assignment_expression | additive_expression | variable | block
+    function_call_expression
   }
 
   root :expression

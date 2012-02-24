@@ -21,17 +21,17 @@ module Kalc
       Ast::Identifier.new(identifier, value)
     }
 
-    rule(:block_list => sequence(:block_list)) {
-      block_list
+    rule(:paren_list => sequence(:paren_list)) {
+      paren_list
     }
 
-    rule(:block_list => "()") {
+    rule(:paren_list => "()") {
       []
     }
 
     rule(:function_call => {:name => simple(:name),
-         :argument_list => sequence(:argument_list)}) {
-      Ast::FunctionCall.new(name, argument_list)
+         :variable_list => sequence(:variable_list)}) {
+      Ast::FunctionCall.new(name, variable_list)
     }
   end
 end
