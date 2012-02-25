@@ -6,10 +6,6 @@ require 'parslet/convenience'
 module Kalc
   class Repl
 
-    CLIST = [
-      'quit', 'exit', 'functions', 'variables', 'ast'
-    ].sort
-
     def run
 
       puts heading
@@ -28,11 +24,15 @@ module Kalc
 
       ast = nil
 
+      function_list = [
+        'quit', 'exit', 'functions', 'variables', 'ast'
+      ] + @interpreter.env.functions.map { |f| f.first }
+
       begin
-        comp = proc { |s| CLIST.grep( /^#{Regexp.escape(s)}/ ) }
+        comp = proc { |s| function_list.grep( /^#{Regexp.escape(s)}/ ) }
         Readline.completion_append_character = ""
         Readline.completion_proc = comp
-        
+
         while input = Readline.readline("kalc-#{Kalc::VERSION} > ", true)
           begin
             case

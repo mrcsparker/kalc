@@ -66,7 +66,9 @@ class Kalc::Grammar < Parslet::Parser
   end
 
   operators :logical_and => '&&',
+            :string_and => 'and',
             :logical_or => '||',
+            :string_or => 'or',
             :less_equal => '<=',
             :greater_equal => '>=',
             :equal => '==',
@@ -84,9 +86,26 @@ class Kalc::Grammar < Parslet::Parser
             :less => '<',
             :greater => '>'
 
-  rule(:and_keyword) { str('AND') }
-  rule(:or_keyword) { str('OR') }
-  rule(:if_keyword) { str('IF') }
+  rule(:true_keyword) {
+    str('TRUE') >> spaces?
+  }
+
+  rule(:false_keyword) {
+    str('FALSE') >> spaces?
+  }
+
+  rule(:boolean) {
+    (true_keyword | false_keyword).as(:boolean)
+  }
+
+  rule(:string) {
+    str('"') >> 
+    (
+      str('\\') >> any |
+      str('"').absnt? >> any
+    ).repeat.as(:string) >> 
+    str('"')
+  }
 
   rule(:number) {
     (match('[+-]').maybe >> digits >> (str('.') >> digits).maybe).as(:number) >> spaces?
@@ -128,7 +147,7 @@ class Kalc::Grammar < Parslet::Parser
   # Atoms can self-evaluate
   # This where the grammar starts
   rule(:atom) {
-    variable.as(:variable) | number | paren_expression
+    boolean | variable.as(:variable) | number | string | paren_expression
   }
 
   # (1 + 2)
@@ -181,7 +200,7 @@ class Kalc::Grammar < Parslet::Parser
   # 1 && 2
   rule(:logical_and_expression) {
     equality_expression.as(:left) >>
-      logical_and >>
+      (logical_and | string_and) >>
       logical_and_expression.as(:right) |
     equality_expression
   }
@@ -189,7 +208,7 @@ class Kalc::Grammar < Parslet::Parser
   # 1 || 2
   rule(:logical_or_expression) {
     logical_and_expression.as(:left) >>
-      logical_or >>
+      (logical_or | string_or) >>
       logical_or_expression.as(:right) |
     logical_and_expression
   }
@@ -222,10 +241,25 @@ class Kalc::Grammar < Parslet::Parser
     expression >> (separator >> expression).repeat
   }
 
-  rule(:line) {
+  rule(:function_body) {
+    expressions
+  }
+
+  rule(:function_definition_expression) {
+    (str('DEF ') >> identifier.as(:name) >>
+      paren_argument_list.as(:argument_list) >> 
+      left_brace >> function_body.as(:body) >> right_brace).as(:function_definition) |
     expressions.as(:expressions)
   }
 
-  root :line
+  rule(:line) {
+    function_definition_expression | spaces
+  }
+
+  rule(:lines) {
+    line >> (new_line >> lines).repeat
+  }
+
+  root :lines
 end
 

@@ -16,10 +16,22 @@ module Kalc
         last
       end
     end
-    
+
+    class BooleanValue
+      attr_reader :value
+
+      def initialize(value)
+        @value = value
+      end
+
+      def eval(context)
+        @value == 'TRUE' ? true : false
+      end
+    end
+
     class FloatingPointNumber
       attr_reader :value
-      
+
       def initialize(value)
         @value = value
       end
@@ -48,7 +60,11 @@ module Kalc
         case @operator.to_s.strip
         when '&&'
           @left && @right
+        when 'and'
+          @left && @right
         when '||'
+          @left || @right
+        when 'or'
           @left || @right
         when '<='
           @left <= @right
@@ -115,6 +131,18 @@ module Kalc
       end
     end
 
+    class StringValue
+      attr_reader :value
+
+      def initialize(value)
+        @value = value
+      end
+
+      def eval(context)
+        value.to_s
+      end
+    end
+
     class FunctionCall
       attr_reader :name
       attr_reader :variable_list
@@ -126,8 +154,34 @@ module Kalc
 
       def eval(context)
         to_call = context.get_function(@name)
-        to_call.call(context, @variable_list)
+        to_call.call(context, *@variable_list)
       end
     end
+
+    class FunctionDefinition
+      attr_reader :name
+      attr_reader :argument_list
+      attr_reader :body
+
+      def initialize(name, argument_list, body)
+        @name = name
+        @argument_list = argument_list
+        @body = body
+      end
+
+      def eval(context)
+        context.add_function(@name.to_sym, lambda { |parent_context, *argument_list|
+          cxt = Environment.new(parent_context)
+
+          argument_list.each_with_index do |arg, idx|
+            cxt.add_variable(argument_list[idx].value, arg.eval(cxt))
+          end
+
+          @body.eval(cxt)
+        })
+        context.get_function(@name)
+      end
+    end
+
   end
 end

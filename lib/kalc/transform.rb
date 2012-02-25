@@ -1,5 +1,6 @@
 module Kalc
   class Transform < Parslet::Transform
+    
     rule(:expressions => sequence(:expressions)) {
       Ast::Expressions.new(expressions)
     }
@@ -7,7 +8,15 @@ module Kalc
     rule(:expressions => simple(:expressions)) {
       Ast::Expressions.new([expressions])
     }
-    
+   
+    rule(:string => simple(:string)) {
+      Ast::StringValue.new(string)
+    }
+
+    rule(:boolean => simple(:boolean)) {
+      Ast::BooleanValue.new(boolean)
+    }
+
     rule(:number => simple(:number)) { 
       Ast::FloatingPointNumber.new(number) 
     }
@@ -22,6 +31,10 @@ module Kalc
 
     rule(:variable => simple(:variable)) {
       Ast::Variable.new(variable)
+    }
+
+    rule(:identifier => simple(:identifier)) {
+      identifier
     }
 
     rule(:assign => {:value => simple(:value), :identifier => simple(:identifier), :operator => simple(:operator)}) {
@@ -39,6 +52,10 @@ module Kalc
     rule(:function_call => {:name => simple(:name),
          :variable_list => sequence(:variable_list)}) {
       Ast::FunctionCall.new(name, variable_list)
+    }
+
+    rule(:argument => simple(:argument)) {
+      Ast::Identifier.new(argument, argument)
     }
 
     rule(:function_definition => {:name => simple(:name),

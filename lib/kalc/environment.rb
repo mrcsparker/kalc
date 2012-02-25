@@ -4,9 +4,10 @@ module Kalc
     attr_reader :functions
     attr_reader :variables
 
-    def initialize
+    def initialize(parent = nil)
       @functions = {}
       @variables = {}
+      @parent = parent
       yield self if block_given?
     end
 
@@ -18,16 +19,19 @@ module Kalc
       @functions[name.to_s.strip]
     end
 
-    def list_functions
-      @functions
-    end
-
     def add_variable(name, value)
       @variables.update({ name.to_s.strip => value })
+      value
     end
 
     def get_variable(name)
-      @variables[name.to_s.strip]
+      if var = @variables[name.to_s.strip]
+        var
+      elsif !@parent.nil?
+        @parent.get_variable(name)
+      else
+        nil
+      end
     end
 
   end
