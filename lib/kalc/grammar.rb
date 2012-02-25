@@ -19,6 +19,9 @@ class Kalc::Grammar < Parslet::Parser
 
   rule(:alpha) { match('[a-zA-Z]') }
 
+  rule(:new_line) { match('[\n\r]').repeat(1) }
+  rule(:separator) { str(';') >> spaces? }
+
   def self.symbols(symbols) 
     symbols.each do |name, symbol|
       rule(name) { str(symbol) >> spaces? }
@@ -30,8 +33,7 @@ class Kalc::Grammar < Parslet::Parser
           :left_brace => '{',
           :right_brace => '}',
           :comma => ',',
-          :colon => ':',
-          :semicolon => ';'
+          :colon => ':'
 
   def self.operators(operators={})
     trailing_chars = Hash.new { |hash,symbol| hash[symbol] = [] }
@@ -208,15 +210,22 @@ class Kalc::Grammar < Parslet::Parser
   rule(:assignment_expression) {
     (variable.as(:identifier) >> 
       assign >> 
-      conditional_expression.as(:value)).as(:assign) |
+      assignment_expression.as(:value)).as(:assign) |
     conditional_expression
   }
 
-  # Start here
   rule(:expression) {
     assignment_expression
   }
 
-  root :expression
+  rule(:expressions) {
+    expression >> (separator >> expression).repeat
+  }
+
+  rule(:line) {
+    expressions.as(:expressions)
+  }
+
+  root :line
 end
 

@@ -1,6 +1,13 @@
 module Kalc
-
   class Transform < Parslet::Transform
+    rule(:expressions => sequence(:expressions)) {
+      Ast::Expressions.new(expressions)
+    }
+
+    rule(:expressions => simple(:expressions)) {
+      Ast::Expressions.new([expressions])
+    }
+    
     rule(:number => simple(:number)) { 
       Ast::FloatingPointNumber.new(number) 
     }

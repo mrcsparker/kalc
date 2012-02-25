@@ -11,11 +11,11 @@ module Kalc
     end
 
     def add_function(name, value)
-      @functions.update({ name.to_s => value })
+      @functions.update({ name.to_s.strip => value })
     end
 
     def get_function(name)
-      @functions[name.to_s]
+      @functions[name.to_s.strip]
     end
 
     def list_functions
@@ -23,11 +23,11 @@ module Kalc
     end
 
     def add_variable(name, value)
-      @variables.update({ name.to_s => value })
+      @variables.update({ name.to_s.strip => value })
     end
 
     def get_variable(name)
-      @variables[name.to_s]
+      @variables[name.to_s.strip]
     end
 
   end

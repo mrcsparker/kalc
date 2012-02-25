@@ -1,8 +1,25 @@
 module Kalc
   module Ast
 
+    class Expressions
+      attr_reader :expressions
+
+      def initialize(expressions)
+        @expressions = expressions
+      end
+
+      def eval(context)
+        last = nil
+        @expressions.each do |exp|
+          last = exp.eval(context)
+        end
+        last
+      end
+    end
+    
     class FloatingPointNumber
       attr_reader :value
+      
       def initialize(value)
         @value = value
       end
@@ -88,7 +105,7 @@ module Kalc
     end
 
     class Variable
-      attr_reader :value
+      attr_reader :variable
       def initialize(variable)
         @variable = variable
       end
