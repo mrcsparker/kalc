@@ -33,5 +33,11 @@ module Kalc
          :variable_list => sequence(:variable_list)}) {
       Ast::FunctionCall.new(name, variable_list)
     }
+
+    rule(:function_definition => {:name => simple(:name),
+         :argument_list => sequence(:argument_list),
+         :body => simple(:body)}) {
+      Ast::FunctionDefinition.new(name, argument_list, body)
+    }
   end
 end

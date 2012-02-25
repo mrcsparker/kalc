@@ -27,6 +27,8 @@ class Kalc::Grammar < Parslet::Parser
 
   symbols :left_paren => '(',
           :right_paren => ')',
+          :left_brace => '{',
+          :right_brace => '}',
           :comma => ',',
           :colon => ':',
           :semicolon => ';'
@@ -98,7 +100,7 @@ class Kalc::Grammar < Parslet::Parser
 
   # Should look like 'Name'
   rule(:variable) {
-    (str("'") >> identifier >> str("'")) >> spaces?
+    identifier | (str("'") >> identifier >> str("'")) >> spaces?
   }
 
   # Does not self-evaluate

@@ -41,6 +41,7 @@ module Kalc
         env.add_function(:COS, lambda { |cxt, args|
           Math.cos(args.first.eval(cxt))
         })
+
       end
     end
 

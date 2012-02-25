@@ -112,6 +112,5 @@ module Kalc
         to_call.call(context, @variable_list)
       end
     end
-
   end
 end
