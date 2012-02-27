@@ -1,6 +1,23 @@
 module Kalc
   module Ast
 
+    class Commands
+      attr_reader :commands
+
+      def initialize(commands)
+        @commands = commands
+      end
+
+      def eval(context)
+        last = nil
+        @commands.each do |command|
+          last = command.eval(context)
+        end
+        last
+      end
+    end
+
+
     class Expressions
       attr_reader :expressions
 
@@ -154,7 +171,7 @@ module Kalc
 
       def eval(context)
         to_call = context.get_function(@name)
-        to_call.call(context, *@variable_list)
+        to_call.call(context, *@variable_list) if to_call
       end
     end
 
@@ -167,7 +184,7 @@ module Kalc
 
       def eval(context)
         context.add_function(@name.to_sym, lambda { |parent_context, *args|
-          dup_body = @body.dup
+          dup_body = Marshal.load(Marshal.dump(@body))
           cxt = Environment.new(parent_context)
           args.each_with_index do |arg, idx|
             cxt.add_variable(@argument_list[idx].value, arg.eval(cxt))

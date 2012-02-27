@@ -92,7 +92,20 @@ module Kalc
           pp output
         })
 
+        env.add_function(:PUTS, lambda { |cxt, output|  
+          puts output.eval(cxt)
+        })
+
       end
+
+    end
+
+    def load_stdlibs(grammar, transform)
+      stdlib = "#{File.dirname(__FILE__)}/stdlib.kalc"
+      input = File.read(stdlib)
+      g = grammar.parse(input)
+      ast = transform.apply(g)
+      run(ast)
     end
 
     def run(ast)

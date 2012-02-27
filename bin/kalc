@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
+
+require "kalc"
+require "pp"
+
+
+input = File.read(ARGV.first)
+
+grammar = Kalc::Grammar.new
+g = grammar.parse(input)
+#pp g
+
+puts "====="
+
+transform = Kalc::Transform.new
+ast = transform.apply(g)
+
+#pp ast
+
+puts "====="
+
+interpreter = Kalc::Interpreter.new
+p interpreter.run(ast)

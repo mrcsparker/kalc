@@ -16,7 +16,13 @@ module Kalc
     end
 
     def get_function(name)
-      @functions[name.to_s.strip]
+      if fun = @functions[name.to_s.strip]
+        fun
+      elsif !@parent.nil?
+        @parent.get_function(name)
+      else
+        nil
+      end
     end
 
     def add_variable(name, value)
@@ -33,6 +39,5 @@ module Kalc
         nil
       end
     end
-
   end
 end

@@ -1,0 +1,4 @@
+DEFINE SQUARE(x) {
+  x * x * x
+}
+

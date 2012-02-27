@@ -1,6 +1,14 @@
 module Kalc
   class Transform < Parslet::Transform
     
+    rule(:commands => sequence(:commands)) {
+      Ast::Commands.new(commands)
+    }
+
+    rule(:commands => simple(:commands)) {
+      Ast::Commands.new([commands])
+    }
+
     rule(:expressions => sequence(:expressions)) {
       Ast::Expressions.new(expressions)
     }

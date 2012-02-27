@@ -238,11 +238,11 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:expressions) {
-    expression >> (separator >> expression).repeat
+    expression >> (separator >> expressions).repeat
   }
 
   rule(:function_body) {
-    expressions
+    expressions.as(:expressions)
   }
 
   rule(:function_definition_expression) {
@@ -252,8 +252,16 @@ class Kalc::Grammar < Parslet::Parser
     expressions.as(:expressions)
   }
 
+  rule(:function_definition_expressions) {
+    function_definition_expression >> separator.maybe >> function_definition_expressions.repeat
+  }
+
+  rule(:commands) {
+    function_definition_expressions | expressions
+  }
+
   rule(:line) {
-    function_definition_expression | spaces
+    commands.as(:commands)
   }
 
   rule(:lines) {

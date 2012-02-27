@@ -18,6 +18,7 @@ module Kalc
 
       puts "= Loading interpreter"
       @interpreter = Kalc::Interpreter.new
+      @interpreter.load_stdlibs(@grammar, @transform)
 
       puts "You are ready to go.  Have fun!"
       puts ""
