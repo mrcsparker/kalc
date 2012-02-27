@@ -159,10 +159,6 @@ module Kalc
     end
 
     class FunctionDefinition
-      attr_reader :name
-      attr_reader :argument_list
-      attr_reader :body
-
       def initialize(name, argument_list, body)
         @name = name
         @argument_list = argument_list
@@ -170,18 +166,16 @@ module Kalc
       end
 
       def eval(context)
-        context.add_function(@name.to_sym, lambda { |parent_context, *argument_list|
+        context.add_function(@name.to_sym, lambda { |parent_context, *args|
+          dup_body = @body.dup
           cxt = Environment.new(parent_context)
-
-          argument_list.each_with_index do |arg, idx|
-            cxt.add_variable(argument_list[idx].value, arg.eval(cxt))
+          args.each_with_index do |arg, idx|
+            cxt.add_variable(@argument_list[idx].value, arg.eval(cxt))
           end
-
-          @body.eval(cxt)
+          dup_body.eval(cxt)
         })
-        context.get_function(@name)
+        nil
       end
     end
-
   end
 end

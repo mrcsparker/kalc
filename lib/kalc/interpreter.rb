@@ -1,14 +1,13 @@
 # Code inspired by https://github.com/txus/schemer
 
+require 'pp'
+
 module Kalc
   class Interpreter
 
     attr_reader :env
 
-    def initialize(ast = nil)
-
-      @ast = ast
-
+    def initialize
       @env = Environment.new do |env|
 
         env.add_function(:IF, lambda { |cxt, cond, if_true, if_false|
@@ -85,12 +84,19 @@ module Kalc
           })
         end
 
+        env.add_function(:P, lambda { |cxt, *output|  
+          p output
+        })
+
+        env.add_function(:PP, lambda { |cxt, *output|  
+          pp output
+        })
+
       end
     end
 
-    def run(ast = nil)
-      @ast = ast if ast
-      @ast.eval(@env)
+    def run(ast)
+      ast.eval(@env)
     end
   end
 end

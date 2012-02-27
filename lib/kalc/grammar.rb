@@ -246,9 +246,9 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:function_definition_expression) {
-    (str('DEF ') >> identifier.as(:name) >>
-      paren_argument_list.as(:argument_list) >> 
-      left_brace >> function_body.as(:body) >> right_brace).as(:function_definition) |
+    (str('DEFINE') >> spaces? >> identifier.as(:name) >>
+         paren_argument_list.as(:argument_list) >>
+         left_brace >> function_body.as(:body) >> right_brace).as(:function_definition) |
     expressions.as(:expressions)
   }
 
