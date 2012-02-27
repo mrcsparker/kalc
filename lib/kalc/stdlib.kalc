@@ -2,3 +2,16 @@ DEFINE SQUARE(x) {
   x * x * x
 }
 
+DEFINE FIB(x) {
+  IF(x == 0, 0, IF(x == 1, 1, (FIB(x - 1) + FIB(x - 2))))
+}
+
+DEFINE FACTORIAL(x) {
+  IF(x == 0, 1, (x * FACTORIAL(x - 1)))
+}
+
+DEFINE TOWERS_OF_HANOI(x) {
+  IF(x == 1, 1, (2 * TOWERS_OF_HANOI(x - 1) + 1))
+}
+
+

@@ -17,7 +17,7 @@ class Kalc::Grammar < Parslet::Parser
   rule(:digits) { digit.repeat(1) }
   rule(:digits?) { digit.repeat }
 
-  rule(:alpha) { match('[a-zA-Z]') }
+  rule(:alpha) { match('[_a-zA-Z]') }
 
   rule(:new_line) { match('[\n\r]').repeat(1) }
   rule(:separator) { str(';') >> spaces? }

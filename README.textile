@@ -2,7 +2,71 @@ h1. kalc
 
 h2. Introduction
 
-Small calculation language.  Based a bit on Excel's formula language.
+kalc is a small functional programming language that (gasp) borrows a lot of
+its syntax from the Excel formula language.
+
+h2. ikalc
+
+kalc comes with its own repl, known as ikalc.  It evaluates when you press return.
+
+h2. Syntax
+
+kalc is a tiny language, and it has very little syntax.  It does support
+functions, variable assignment, and arithmetic.
+
+h3. Arithmetic
+
+<pre>
+1 + 1 / (10 * 100) - 3 + 3 - (3 - 2)
+1 > 1
+SUM(1, 2, 3, 4, 5)
+</pre>
+
+Arithmetic is standard infix with nesting via parenthesis.
+
+h3. Logical operations
+
+<pre>
+1 > 2 ? 1 : 3 # Ternary
+(1 || 2) > 3
+1 > 2 or 3 < 2 # false
+OR(1 > 2, 3 < 2, 8 == 8) # true
+</pre>
+
+h3. Variable assignment
+
+<pre>
+a = 1
+b = 2
+d = a + b
+</pre>
+
+h3.  Creating functions
+
+<pre>
+DEFINE FOO(a, b) {
+  a + b
+}
+</pre>
+
+There are a few examples of functions in lib/stdlib.kalc
+
+h3. Loops
+
+There are no looping mechanisms to speak of, but recursion works well.
+
+<pre>
+DEFINE SAMPLE_LOOP(a) {
+  PUTS(a)
+  IF(a == 1, 1, SAMPLE_LOOP(a - 1))
+}
+</pre>
+
+h4. More inside
+
+Not everything is documented yet.  As you can see, it is a mix of
+a lot of different ideas.  The goal is to have an excel-like language
+that is somewhat functional.
 
 h2. Contributing
 
