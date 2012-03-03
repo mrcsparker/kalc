@@ -69,6 +69,10 @@ module Kalc
           Integer(val.eval(cxt))
         })
 
+        env.add_function(:LN, lambda { |cxt, val|
+          Math.log(val.eval(cxt))
+        })
+
         math_funs = 
           [ 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh',
             'cbrt', 'cos', 'cosh',
