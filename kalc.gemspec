@@ -7,11 +7,11 @@ Gem::Specification.new do |s|
   s.version     = Kalc::VERSION
   s.authors     = ["Chris Parker"]
   s.email       = ["mrcsparker@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/mrcsparker/kalc"
   s.summary     = %q{Small calculation language.}
   s.description = %q{Calculation language slightly based on Excel's formula language.}
 
-  s.rubyforge_project = "lkalc"
+  s.rubyforge_project = "kalc"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

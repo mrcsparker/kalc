@@ -1,25 +1,19 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
+kalc_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(kalc_dir) unless $LOAD_PATH.include?(kalc_dir)
 
 require "kalc"
 require "pp"
-
 
 input = File.read(ARGV.first)
 
 grammar = Kalc::Grammar.new
 g = grammar.parse(input)
-#pp g
-
-puts "====="
 
 transform = Kalc::Transform.new
 ast = transform.apply(g)
 
-#pp ast
-
-puts "====="
 
 interpreter = Kalc::Interpreter.new
-p interpreter.run(ast)
+puts interpreter.run(ast)

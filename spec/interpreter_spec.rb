@@ -22,6 +22,6 @@ describe Kalc::Interpreter do
   def evaluate(expression)
     g = @grammar.parse(expression)
     ast = @transform.apply(g)
-    Kalc::Interpreter.new(ast).run
+    Kalc::Interpreter.new.run(ast)
   end
 end
