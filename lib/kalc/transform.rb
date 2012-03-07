@@ -29,6 +29,18 @@ module Kalc
       Ast::FloatingPointNumber.new(number) 
     }
 
+    rule(:left => subtree(:tree)) {
+      tree
+    }
+
+    rule(:right => subtree(:tree)) {
+      tree
+    }
+
+    rule(:line => subtree(:tree)) {
+      tree
+    }
+
     rule(:left => simple(:left), :right => simple(:right), :operator => simple(:operator)) { 
       Ast::Arithmetic.new(left, right, operator)
     }

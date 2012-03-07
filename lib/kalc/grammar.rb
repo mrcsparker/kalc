@@ -165,7 +165,7 @@ class Kalc::Grammar < Parslet::Parser
 
   # 1 * 2
   rule(:multiplicative_expression) {
-    function_call_expression.as(:left) >> 
+    function_call_expression.as(:left) >>
       (power_of | multiply | divide | modulus) >> 
       multiplicative_expression.as(:right) |
     function_call_expression
