@@ -82,6 +82,7 @@ class Kalc::Grammar < Parslet::Parser
             :multiply => '*',
             :divide => '/',
             :modulus => '%',
+            :power_of => '^',
 
             :less => '<',
             :greater => '>'
@@ -165,7 +166,7 @@ class Kalc::Grammar < Parslet::Parser
   # 1 * 2
   rule(:multiplicative_expression) {
     function_call_expression.as(:left) >> 
-      (multiply | divide | modulus) >> 
+      (power_of | multiply | divide | modulus) >> 
       multiplicative_expression.as(:right) |
     function_call_expression
   }

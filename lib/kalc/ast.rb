@@ -95,6 +95,8 @@ module Kalc
           @left - @right
         when '+'
           @left + @right
+        when '^'
+          @left ** @right
         when '*'
           @left * @right
         when '/'
