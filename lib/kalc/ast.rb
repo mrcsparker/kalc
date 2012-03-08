@@ -58,6 +58,24 @@ module Kalc
       end
     end
 
+    class Ops
+      attr_reader :left
+      attr_reader :ops
+      
+      def initialize(left, ops)
+        @left = left
+        @ops = ops
+      end
+
+      def eval(context)
+        @ops.inject(@left.eval(context)) { |x, op|
+          a = Arithmetic.new(x, op[:right].eval(context), op[:operator])
+          a.eval(context) 
+        }
+      end
+
+    end
+
     class Arithmetic
       attr_reader :left
       attr_reader :right
@@ -70,10 +88,6 @@ module Kalc
       end
 
       def eval(context)
-
-        @left = @left.eval(context)
-        @right = @right.eval(context)
-
         case @operator.to_s.strip
         when '&&'
           @left && @right

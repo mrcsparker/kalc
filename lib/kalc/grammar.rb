@@ -165,18 +165,16 @@ class Kalc::Grammar < Parslet::Parser
 
   # 1 * 2
   rule(:multiplicative_expression) {
-    function_call_expression.as(:left) >>
-      (power_of | multiply | divide | modulus) >> 
-      multiplicative_expression.as(:right) |
-    function_call_expression
+    function_call_expression.as(:left) >> 
+      ((power_of | multiply | divide | modulus) >> 
+        multiplicative_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 + 2
   rule(:additive_expression) {
     multiplicative_expression.as(:left) >> 
-      (add | subtract) >> 
-      additive_expression.as(:right) |
-    multiplicative_expression
+      ((add | subtract) >> 
+        additive_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 < 2
@@ -185,43 +183,38 @@ class Kalc::Grammar < Parslet::Parser
   # 1 >= 2
   rule(:relational_expression) {
     additive_expression.as(:left) >> 
-      (less | greater | less_equal | greater_equal) >>
-      relational_expression.as(:right) |
-    additive_expression
+      ((less | greater | less_equal | greater_equal) >>
+        relational_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 == 2
   rule(:equality_expression) {
     relational_expression.as(:left) >>
-      (equal | not_equal) >>
-      equality_expression.as(:right) |
-    relational_expression
+      ((equal | not_equal) >>
+        equality_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 && 2
   rule(:logical_and_expression) {
     equality_expression.as(:left) >>
-      (logical_and | string_and) >>
-      logical_and_expression.as(:right) |
-    equality_expression
+      ((logical_and | string_and) >>
+        logical_and_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 || 2
   rule(:logical_or_expression) {
     logical_and_expression.as(:left) >>
-      (logical_or | string_or) >>
-      logical_or_expression.as(:right) |
-    logical_and_expression
+      ((logical_or | string_or) >>
+        logical_or_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 > 2 ? 3 : 4
   rule(:conditional_expression) {
     logical_or_expression.as(:condition) >> 
-      question_mark >> 
-      conditional_expression.as(:true) >> 
-      colon >> 
-      conditional_expression.as(:false) | 
-    logical_or_expression
+      (question_mark >> 
+        conditional_expression.as(:true) >> 
+        colon >> 
+        conditional_expression.as(:false)).maybe
   }
 
   # 'a' = 1

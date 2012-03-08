@@ -1,6 +1,18 @@
 module Kalc
   class Transform < Parslet::Transform
-    
+
+    rule(:condition => subtree(:condition)) { 
+      condition 
+    }
+
+    rule(:left => subtree(:left), :ops => []) { 
+      left 
+    }
+
+    rule(:right => subtree(:right), :ops => []) { 
+      right 
+    }
+
     rule(:commands => sequence(:commands)) {
       Ast::Commands.new(commands)
     }
@@ -16,7 +28,7 @@ module Kalc
     rule(:expressions => simple(:expressions)) {
       Ast::Expressions.new([expressions])
     }
-   
+
     rule(:string => simple(:string)) {
       Ast::StringValue.new(string)
     }
@@ -29,16 +41,8 @@ module Kalc
       Ast::FloatingPointNumber.new(number) 
     }
 
-    rule(:left => subtree(:tree)) {
-      tree
-    }
-
-    rule(:right => subtree(:tree)) {
-      tree
-    }
-
-    rule(:line => subtree(:tree)) {
-      tree
+    rule(:left => simple(:left), :ops => subtree(:ops)) {
+      Ast::Ops.new(left, ops)
     }
 
     rule(:left => simple(:left), :right => simple(:right), :operator => simple(:operator)) { 
