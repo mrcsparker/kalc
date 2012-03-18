@@ -21,6 +21,10 @@ module Kalc
       Ast::Commands.new([commands])
     }
 
+    rule(:negative => simple(:negative)) {
+      Ast::Negative.new(negative)
+    }
+
     rule(:expressions => sequence(:expressions)) {
       Ast::Expressions.new(expressions)
     }

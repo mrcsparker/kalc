@@ -160,7 +160,7 @@ class Kalc::Grammar < Parslet::Parser
   # AND(1, 2, ...)
   rule(:function_call_expression) {
     (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) |
-    atom
+    (str('-') >> atom).as(:negative) | atom
   }
 
   # 1 * 2

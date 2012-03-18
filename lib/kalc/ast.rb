@@ -17,7 +17,6 @@ module Kalc
       end
     end
 
-
     class Expressions
       attr_reader :expressions
 
@@ -31,6 +30,22 @@ module Kalc
           last = exp.eval(context)
         end
         last
+      end
+    end
+
+    class Negative
+      attr_reader :value
+
+      def initialize(value)
+        @value = value
+      end
+
+      def eval(context)
+        begin
+          -(@value.eval(context))
+        rescue
+          @value.eval(context)
+        end
       end
     end
 
