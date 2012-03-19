@@ -148,7 +148,7 @@ class Kalc::Grammar < Parslet::Parser
   # Atoms can self-evaluate
   # This where the grammar starts
   rule(:atom) {
-    boolean | variable.as(:variable) | number | string | paren_expression
+    paren_expression.as(:paren_expression) | boolean | variable.as(:variable) | number | string
   }
 
   # (1 + 2)

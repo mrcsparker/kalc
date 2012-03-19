@@ -77,6 +77,10 @@ module Kalc
       []
     }
 
+    rule(:paren_expression => simple(:paren_expression)) {
+      Ast::ParenExpression.new(paren_expression)
+    }
+
     rule(:function_call => {:name => simple(:name),
          :variable_list => sequence(:variable_list)}) {
       Ast::FunctionCall.new(name, variable_list)

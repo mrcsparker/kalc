@@ -73,6 +73,18 @@ module Kalc
       end
     end
 
+    class ParenExpression
+      attr_reader :value
+
+      def initialize(value)
+        @value = value
+      end
+
+      def eval(context)
+        @value.eval(context)
+      end
+    end
+
     class Ops
       attr_reader :left
       attr_reader :ops
