@@ -13,6 +13,14 @@ module Kalc
       right 
     }
 
+    rule(:left => subtree(:left), :non_ops => []) { 
+      left 
+    }
+
+    rule(:right => subtree(:right), :non_ops => []) { 
+      right 
+    }
+
     rule(:commands => sequence(:commands)) {
       Ast::Commands.new(commands)
     }
@@ -43,6 +51,10 @@ module Kalc
 
     rule(:number => simple(:number)) { 
       Ast::FloatingPointNumber.new(number) 
+    }
+
+    rule(:non_ops => subtree(:non_ops)) {
+      Ast::NonOps.new(non_ops)
     }
 
     rule(:left => simple(:left), :ops => subtree(:ops)) {

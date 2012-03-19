@@ -85,6 +85,18 @@ module Kalc
       end
     end
 
+    class NonOps
+      attr_reader :value
+
+      def initialize(value)
+        @value = value
+      end
+
+      def eval(context)
+        Arithmetic.new(@value.left.eval(context), @value.right.eval(context), @value.operator).eval(context)
+      end
+    end
+
     class Ops
       attr_reader :left
       attr_reader :ops

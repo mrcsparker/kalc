@@ -156,6 +156,16 @@ class Kalc::Grammar < Parslet::Parser
     left_paren >> conditional_expression >> right_paren
   }
 
+  rule(:non_ops_atom) {
+    paren_expression.as(:paren_expression) | variable.as(:variable) | number
+  }
+
+  rule(:non_ops_expression) {
+    (non_ops_atom.as(:left) >> 
+      power_of >>
+      non_ops_atom.as(:right)).as(:non_ops)
+  }
+
   # IF(1, 2, 3)
   # AND(1, 2, ...)
   rule(:function_call_expression) {
@@ -165,8 +175,8 @@ class Kalc::Grammar < Parslet::Parser
 
   # 1 * 2
   rule(:multiplicative_expression) {
-    function_call_expression.as(:left) >> 
-      ((power_of | multiply | divide | modulus) >> 
+    (non_ops_expression | function_call_expression).as(:left) >> 
+      ((multiply | divide | modulus) >> 
         multiplicative_expression.as(:right)).repeat.as(:ops)
   }
 
