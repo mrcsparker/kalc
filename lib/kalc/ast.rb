@@ -107,14 +107,10 @@ module Kalc
       end
 
       def eval(context)
+      
         @ops.inject(@left.eval(context)) { |x, op|
-          if op[:right].kind_of? Kalc::Ast::Ops
-            a = Arithmetic.new(x, op[:right].left.eval(context), op[:operator])
-            Ops.new(a, op[:right].ops).eval(context)
-          else
-            a = Arithmetic.new(x, op[:right].eval(context), op[:operator])
-            a.eval(context)
-          end
+          a = Arithmetic.new(x, op[:right].eval(context), op[:operator])
+          a.eval(context)
         }
       end
 

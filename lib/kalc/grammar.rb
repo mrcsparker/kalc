@@ -184,7 +184,7 @@ class Kalc::Grammar < Parslet::Parser
   rule(:additive_expression) {
     multiplicative_expression.as(:left) >> 
       ((add | subtract) >> 
-        additive_expression.as(:right)).repeat.as(:ops)
+        multiplicative_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 < 2
