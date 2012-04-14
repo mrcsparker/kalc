@@ -107,7 +107,6 @@ module Kalc
       end
 
       def eval(context)
-      
         @ops.inject(@left.eval(context)) { |x, op|
           a = Arithmetic.new(x, op[:right].eval(context), op[:operator])
           a.eval(context)

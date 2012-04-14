@@ -10,6 +10,13 @@ describe Kalc::Interpreter do
   it { evaluate("1 + 1").should == 2.0 }
   it { evaluate("4 + 1").should == 5 }
   it { evaluate("5 + 5").should == 10 }
+  
+  it { evaluate("5 / 5").should == 1 }
+  
+  it { evaluate("5 / 4 / 2").should == 0.625 }
+  it { evaluate("5/4/2").should == 0.625 }
+
+  it { evaluate("6 * 2 / 3").should == 4 }
 
   it { evaluate("10 > 9").should == true }
   it { evaluate("10 < 9").should == false }
