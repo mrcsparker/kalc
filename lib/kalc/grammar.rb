@@ -166,6 +166,7 @@ class Kalc::Grammar < Parslet::Parser
   # AND(1, 2, ...)
   rule(:function_call_expression) {
     (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) |
+    (str('+') >> non_ops_expression).as(:positive) |
     (str('-') >> non_ops_expression).as(:negative) | non_ops_expression
   }
 

@@ -33,6 +33,10 @@ module Kalc
       Ast::Negative.new(negative)
     }
 
+    rule(:positive => simple(:positive)) {
+      Ast::Positive.new(positive)
+    }
+
     rule(:expressions => sequence(:expressions)) {
       Ast::Expressions.new(expressions)
     }

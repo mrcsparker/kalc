@@ -49,6 +49,25 @@ module Kalc
       end
     end
 
+    # Does nothing.  For compat.
+    class Positive
+      attr_reader :value
+
+      def initialize(value)
+        @value = value
+      end
+
+      def eval(context)
+        begin
+          +(@value.eval(context))
+        rescue
+          @value.eval(context)
+        end
+      end
+    end
+
+
+
     class BooleanValue
       attr_reader :value
 
