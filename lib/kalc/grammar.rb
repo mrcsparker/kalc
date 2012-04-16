@@ -122,7 +122,7 @@ class Kalc::Grammar < Parslet::Parser
 
   # Should look like 'Name'
   rule(:variable) {
-    identifier | (str("'") >> identifier >> str("'")) >> spaces?
+    identifier | (str("'") >> spaces? >> identifier.repeat >> str("'")) >> spaces?
   }
 
   # Does not self-evaluate
