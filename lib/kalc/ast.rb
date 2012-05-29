@@ -66,8 +66,6 @@ module Kalc
       end
     end
 
-
-
     class BooleanValue
       attr_reader :value
 
@@ -159,6 +157,8 @@ module Kalc
           @left <= @right
         when '>='
           @left >= @right
+        when '='
+          @left == @right
         when '=='
           @left == @right
         when '!='

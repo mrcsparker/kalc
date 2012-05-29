@@ -10,15 +10,8 @@ module Kalc
 
       puts heading
 
-      puts "= Loading grammar"
-      @grammar = Kalc::Grammar.new
-
-      puts "= Loading transform"
-      @transform = Kalc::Transform.new
-
-      puts "= Loading interpreter"
-      @interpreter = Kalc::Interpreter.new
-      @interpreter.load_stdlibs(@grammar, @transform)
+      # Load Kalc with debug
+      @kalc = Kalc::Runner.new(true)
 
       puts "You are ready to go.  Have fun!"
       puts ""
@@ -27,7 +20,7 @@ module Kalc
 
       function_list = [
         'quit', 'exit', 'functions', 'variables', 'ast'
-      ] + @interpreter.env.functions.map { |f| f.first }
+      ] + @kalc.interpreter.env.functions.map { |f| f.first }
 
       begin
         comp = proc { |s| function_list.grep( /^#{Regexp.escape(s)}/ ) }
@@ -40,15 +33,13 @@ module Kalc
             when (input == 'quit' || input == 'exit')
               break
             when input == "functions"
-              puts @interpreter.env.functions.map { |f| f.first }.join(", ")
+              puts @kalc.interpreter.env.functions.map { |f| f.first }.join(", ")
             when input == 'variables'
-              puts @interpreter.env.variables.map { |v| "#{v[0]} = #{v[1]}" }.join("\n\r")
+              puts @kalc.interpreter.env.variables.map { |v| "#{v[0]} = #{v[1]}" }.join("\n\r")
             when input == 'ast'
-              pp ast
+              pp @kalc.ast
             when input != ""
-              g = @grammar.parse_with_debug(input)
-              ast = @transform.apply(g)
-              puts @interpreter.run(ast)
+              puts @kalc.run(input)
             end
           rescue Parslet::ParseFailed => e
             puts e, g.root.error_tree

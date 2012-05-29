@@ -1,0 +1,22 @@
+DEFINE AVERAGE(x, y) {
+  (x + y) / 2
+}
+
+DEFINE GOOD_ENOUGH(guess, x) {
+  (ABS(SQUARE(guess) - x)) < 0.001
+}
+
+DEFINE IMPROVE(guess, x) {
+  a := x / guess;
+  AVERAGE(guess, a)
+}
+
+DEFINE SQRT_ITER(guess, x) {
+  IF(GOOD_ENOUGH(guess, x), guess, SQRT_ITER(IMPROVE(guess, x), x))
+}
+
+DEFINE NEWTON_SQRT(x) {
+  SQRT_ITER(1.0, x)
+}
+
+PUTS NEWTON_SQRT(1024)

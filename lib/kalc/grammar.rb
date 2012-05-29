@@ -74,7 +74,8 @@ class Kalc::Grammar < Parslet::Parser
             :equal => '==',
             :not_equal => '!=',
 
-            :assign => '=',
+            :assign => ':=',
+            :excel_equal => '=',
             :question_mark => '?',
 
             :subtract => '-',
@@ -194,10 +195,10 @@ class Kalc::Grammar < Parslet::Parser
         relational_expression.as(:right)).repeat.as(:ops)
   }
 
-  # 1 == 2
+  # 1 = 2
   rule(:equality_expression) {
     relational_expression.as(:left) >>
-      ((equal | not_equal) >>
+      ((excel_equal | equal | not_equal) >>
         equality_expression.as(:right)).repeat.as(:ops)
   }
 

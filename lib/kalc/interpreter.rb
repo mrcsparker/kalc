@@ -104,7 +104,7 @@ module Kalc
 
     end
 
-    def load_stdlibs(grammar, transform)
+    def load_stdlib(grammar, transform)
       stdlib = "#{File.dirname(__FILE__)}/stdlib.kalc"
       input = File.read(stdlib)
       g = grammar.parse(input)

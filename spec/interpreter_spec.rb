@@ -25,21 +25,53 @@ describe Kalc::Interpreter do
 
   it { evaluate("10 >= 10").should == true }
 
+  it { evaluate("ABS(-1 + -2)").should == 3 }
+
   it "should be able to load variables" do
-    evaluate("a = 1; 1 + a").should == 2
-    evaluate("a = 1; b = 2; 1 + b").should == 3
+    evaluate("a := 1; 1 + a").should == 2
+    evaluate("a := 1; b := 2; 1 + b").should == 3
   end
 
   it "should be able to load single quoted variables" do
-    evaluate("'a' = 1; 1 + 'a'").should == 2
-    evaluate("'a' = 1; 'b' = 2; 'b' + 'a'").should == 3
+    evaluate("'a' := 1; 1 + 'a'").should == 2
+    evaluate("'a' := 1; 'b' := 2; 'b' + 'a'").should == 3
   
-    evaluate("'a b' = 1; 'a b' + 1").should == 2
+    evaluate("'a b' := 1; 'a b' + 1").should == 2
   end
 
   it { evaluate("((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0))").should == 15000 }
 
   it { evaluate("(((40.0)/1000*(4380.0)*(200.0))-((40.0)/1000*(4380.0)*((((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0)))/(10.0)/(40.0)/(0.8))))*(0.05)").should == 1341.375 }
+
+  context "Negative numbers" do
+    it { evaluate("-2").should == -2 }
+    it { evaluate("-1000").should == -1000 }
+    it { evaluate("-1000.0001").should == -1000.0001 }
+    it { evaluate("1 + -1").should == 0 }
+    it { evaluate("1 + -10").should == -9 }
+  end
+
+  context "Positive numbers" do
+    it { evaluate("1 + +1").should == 2 }
+    it { evaluate("1 + +1 - 1").should == 1 }
+    it { evaluate("+10000.0001").should == 10000.0001 }
+  end
+
+  context "Boolean value" do
+    it { evaluate("TRUE").should == true }
+    it { evaluate("FALSE").should == false }
+    it { evaluate("FALSE || TRUE").should == true }
+    it { evaluate("FALSE && TRUE").should == false }
+  end
+
+  context "Floating point number" do
+    it { evaluate("1.01").should == 1.01 }
+    it { evaluate("1.01 + 0.02").should == 1.03 }
+    it { evaluate("1.01 - 0.01").should == 1 }
+    it { evaluate("1.1 + 1.1").should == 2.2 }
+    it { evaluate("1.01 = 1.01").should == true }
+    it { evaluate("1.01 = 1.02").should == false }
+  end
 
   private
   def evaluate(expression)
