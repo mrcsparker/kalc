@@ -5,7 +5,7 @@ require 'pp'
 module Kalc
   class Interpreter
 
-    attr_reader :env
+    attr_accessor :env
 
     def initialize
       @env = Environment.new do |env|
@@ -38,6 +38,32 @@ module Kalc
             end
           end
           retval
+        })
+
+        env.add_function(:RAND, lambda { |cxt, val|  
+          rand(val.eval(cxt))
+        })
+
+        env.add_function(:SYSTEM, lambda { |cxt, val|  
+          throw "Nope.  I don't think so!"
+        })
+
+        # IS?
+        env.add_function(:ISLOGICAL, lambda { |cxt, val|  
+          newval = val.eval(cxt)
+          newval == true || newval == false
+        })
+
+        env.add_function(:ISNONTEXT, lambda { |cxt, val|  
+          !val.eval(cxt).is_a? String
+        })
+
+        env.add_function(:ISNUMBER, lambda { |cxt, val|  
+          val.eval(cxt).is_a? Numeric
+        })
+
+        env.add_function(:ISTEXT, lambda { |cxt, val|  
+          val.eval(cxt).is_a? String
         })
 
         # Math
@@ -88,6 +114,16 @@ module Kalc
           })
         end
 
+        # Change case of text
+        env.add_function(:UPPER, lambda { |cxt, val|  
+          val.eval(cxt).upcase
+        })
+
+        env.add_function(:LOWER, lambda { |cxt, val|  
+          val.eval(cxt).downcase
+        })
+
+        # Debug
         env.add_function(:P, lambda { |cxt, *output|  
           p output
         })
@@ -101,7 +137,6 @@ module Kalc
         })
 
       end
-
     end
 
     def load_stdlib(grammar, transform)

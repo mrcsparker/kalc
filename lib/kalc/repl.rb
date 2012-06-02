@@ -6,12 +6,16 @@ require 'parslet/convenience'
 module Kalc
   class Repl
 
+    def load_env
+      @kalc = Kalc::Runner.new(true)
+    end
+
     def run
 
       puts heading
 
       # Load Kalc with debug
-      @kalc = Kalc::Runner.new(true)
+      load_env
 
       puts "You are ready to go.  Have fun!"
       puts ""
@@ -36,6 +40,8 @@ module Kalc
               puts @kalc.interpreter.env.functions.map { |f| f.first }.join(", ")
             when input == 'variables'
               puts @kalc.interpreter.env.variables.map { |v| "#{v[0]} = #{v[1]}" }.join("\n\r")
+            when input == 'reload'
+              load_env
             when input == 'ast'
               pp @kalc.ast
             when input != ""
