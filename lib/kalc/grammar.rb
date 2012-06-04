@@ -109,8 +109,13 @@ class Kalc::Grammar < Parslet::Parser
     str('"')
   }
 
+  rule(:exponent) {
+    match('[eE]') >> match('[-+]').maybe >> digits
+  }
+
   rule(:number) {
-    (match('[+-]').maybe >> digits >> (str('.') >> digits).maybe).as(:number) >> spaces?
+    (match('[+-]').maybe >> 
+     digits >> (str('.') >> digits).maybe >> exponent.maybe).as(:number) >> spaces?
   }
 
   rule(:identifier) {
