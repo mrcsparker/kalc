@@ -14,6 +14,16 @@ h2. Syntax
 kalc is a tiny language, and it has very little syntax.  It does support
 functions, variable assignment, and arithmetic.
 
+h3. Numbers
+
+All numbers are floating point.
+
+<pre>
+1 => 1.0
+2.020 => 2.02
+1.23E => 12300000000.0
+</pre>
+
 h3. Arithmetic
 
 <pre>

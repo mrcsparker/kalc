@@ -73,6 +73,11 @@ describe Kalc::Interpreter do
     it { evaluate("1.01 = 1.02").should == false }
   end
 
+  context "Exponents" do
+    it { evaluate("1.23e+10").should == 12300000000.0 }
+    it { evaluate("1.23e-10").should == 1.23e-10 }
+  end
+
   private
   def evaluate(expression)
     g = @grammar.parse(expression)
