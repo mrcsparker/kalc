@@ -103,7 +103,8 @@ module Kalc
           [ 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh',
             'cbrt', 'cos', 'cosh',
             'erf', 'erfc', 'exp',
-            'log', 'log2', 'log10',
+            'gamma',
+            'lgamma', 'log', 'log2', 'log10',
             'sin', 'sinh', 'sqrt',
             'tan', 'tanh',
              ]
@@ -122,6 +123,27 @@ module Kalc
         env.add_function(:LOWER, lambda { |cxt, val|  
           val.eval(cxt).downcase
         })
+
+        # Strings
+        string_funs = 
+          [
+            'chomp', 'chop', 'chr', 'clear', 'count',
+            'downcase',
+            'hex', 
+            'inspect', 'intern', 'to_sym',
+            'length', 'size', 'lstrip', 
+            'succ', 'next', 
+            'oct', 'ord',
+            'reverse', 'rstrip',
+            'strip', 'swapcase', 'to_c', 'to_f', 'to_i', 'to_r',
+            'upcase'
+          ]
+
+        string_funs.each do |str_fun|
+          env.add_function(str_fun.upcase.to_sym, lambda { |cxt, val|
+            String.new(val.eval(cxt)).send(str_fun.to_sym)
+          })
+        end
 
         # Debug
         env.add_function(:P, lambda { |cxt, *output|  
