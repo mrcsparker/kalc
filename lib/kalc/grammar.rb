@@ -113,7 +113,11 @@ class Kalc::Grammar < Parslet::Parser
     match('[eE]') >> match('[-+]').maybe >> digits
   }
 
+  # We are using a really broad definition of what a number is.
+  # Numbers can be 1, 1.0, 0.1, 1.0e4, +1.0E10, etc
   rule(:number) {
+    (match('[+-]').maybe >> 
+      (str('.') >> digits >> exponent.maybe).as(:number) >> spaces?) |
     (match('[+-]').maybe >> 
      digits >> (str('.') >> digits).maybe >> exponent.maybe).as(:number) >> spaces?
   }

@@ -78,6 +78,11 @@ describe Kalc::Interpreter do
     it { evaluate("1.23e-10").should == 1.23e-10 }
   end
 
+  context "Numbers starting with a decimal point" do
+    it { evaluate("0.4").should == 0.4 }
+    it { evaluate(".4").should == 0.4 }
+  end
+
   private
   def evaluate(expression)
     g = @grammar.parse(expression)
