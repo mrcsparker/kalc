@@ -33,7 +33,8 @@ class Kalc::Grammar < Parslet::Parser
           :left_brace => '{',
           :right_brace => '}',
           :comma => ',',
-          :colon => ':'
+          :colon => ':',
+          :question_mark => '?'
 
   def self.operators(operators={})
     trailing_chars = Hash.new { |hash,symbol| hash[symbol] = [] }
@@ -76,7 +77,6 @@ class Kalc::Grammar < Parslet::Parser
 
             :assign => ':=',
             :excel_equal => '=',
-            :question_mark => '?',
 
             :subtract => '-',
             :add => '+',
@@ -238,9 +238,9 @@ class Kalc::Grammar < Parslet::Parser
   rule(:conditional_expression) {
     logical_or_expression.as(:condition) >> 
       (question_mark >> 
-        conditional_expression.as(:true) >> 
+        conditional_expression.as(:true_cond) >> 
         colon >> 
-        conditional_expression.as(:false)).maybe
+        conditional_expression.as(:false_cond)).maybe
   }
 
   # 'a' = 1

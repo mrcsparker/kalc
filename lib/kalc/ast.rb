@@ -193,7 +193,7 @@ module Kalc
       end
 
       def eval(context)
-        @condition ? true_cond : false_cond
+        @condition.eval(context) ? @true_cond.eval(context) : @false_cond.eval(context)
       end
     end
 

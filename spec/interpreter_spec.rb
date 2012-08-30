@@ -78,6 +78,10 @@ describe Kalc::Interpreter do
     it { evaluate("1.01 = 1.02").should == false }
   end
 
+  context "Ternary" do
+    it { evaluate("1 > 2 ? 1 : 2").should == 2 }
+  end
+
   context "Exponents" do
     it { evaluate("1.23e+10").should == 12300000000.0 }
     it { evaluate("1.23e-10").should == 1.23e-10 }

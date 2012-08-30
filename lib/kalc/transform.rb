@@ -69,7 +69,7 @@ module Kalc
       Ast::Arithmetic.new(left, right, operator)
     }
 
-    rule(:condition => simple(:condition), :true => simple(:true_cond), :false => simple(:false_cond)) { 
+    rule(:condition => simple(:condition), :true_cond => simple(:true_cond), :false_cond => simple(:false_cond)) { 
       Ast::Conditional.new(condition, true_cond, false_cond)
     }
 

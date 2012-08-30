@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kalc (0.7.0)
+    kalc (0.8.0)
       parslet (~> 1.4)
 
 GEM

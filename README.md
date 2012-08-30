@@ -22,20 +22,25 @@ Numbers
 
 All numbers are floating point.
 
-    1 =\> 1.0 2.020 =\> 2.02 1.23E =\> 12300000000.0
+    1 => 1.0 
+    2.020 => 2.02 
+    1.23E => 12300000000.0
 
 Arithmetic
 ----------
 
-    1 + 1 / (10 \* 100) - 3 + 3 - (3 - 2) 1 \> 1 SUM(1, 2, 3, 4, 5)
+    1 + 1 / (10 * 100) - 3 + 3 - (3 - 2)
+    SUM(1, 2, 3, 4, 5)
 
 Arithmetic is standard infix with nesting via parenthesis.
 
 Logical operations
 ------------------
 
-    1 \> 2 ? 1 : 3 # Ternary (1 || 2) \> 3 1 \> 2 or 3 <2 # false OR(1 > 2, 3 \<
-    2, 8 == 8) # true
+    2 < 1 ? 1 : 3 # Ternary 
+    (1 || 2) # 1.0
+    2 or 3 # 2.0
+    OR(1 > 2, 3 < 2, 8 == 8) # true
 
 Variable assignment
 -------------------
