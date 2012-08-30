@@ -32,6 +32,11 @@ describe Kalc::Interpreter do
     evaluate("a := 1; b := 2; 1 + b").should == 3
   end
 
+  it "should be able to load quoted variables" do
+    evaluate("'Item (a)' := 1; 1 + 'Item (a)'").should == 2
+    evaluate("'a' := 1; 'b[a]' := 2 + 'a'; 1 + 'b[a]'").should == 4
+  end
+
   it "should be able to load single quoted variables" do
     evaluate("'a' := 1; 1 + 'a'").should == 2
     evaluate("'a' := 1; 'b' := 2; 'b' + 'a'").should == 3

@@ -13,8 +13,9 @@ typing in `ikalc`
 Syntax
 ------
 
-kalc is a tiny language, and it has very little syntax. It does support
-functions, variable assignment, and arithmetic.
+kalc is a tiny language, and it has very little syntax. It supports
+functions, variable assignment, arithmetic, and some string parsing
+functionality.
 
 Numbers
 -------
@@ -39,7 +40,31 @@ Logical operations
 Variable assignment
 -------------------
 
+The assignment operator `:=` is borrowed from Pascal.  This decision was
+made for practical reason.  Since comparison operators are both `=` and
+`==` and the language is expression-based, `=` could not be chosen. 
+
+Variables come in a lot of different flavors.
+
+You have standard variables:
+
     a := 1 b := 2 d := a + b
+
+    d := 100.0
+
+and you have quoted variables:
+
+    'a' := 1 'b' := 2 'd' := 'a' + 'b'
+
+Quoted variables can contain pretty much any character that you can
+think of:
+
+    'Hello world' := 1
+    'Hello 2 the world' := 1
+    'This \' is a \' [string]' := 1
+    '!@#$%^& !@#$%^& *&^%$%^&*' := 1
+
+The only real rule is that you need to escape a standard single quote.
 
 Functions
 ---------
@@ -62,13 +87,38 @@ on the Excel formula functions, so you should see some overlap.
 
 Some of them are:
 
-    IF, OR, NOT, AND, RAND, SYSTEM, ISLOGICAL, ISNONTEXT, ISNUMBER, ISTEXT, ABS,
-    DEGREES, PRODUCT, RADIANS, ROUND, SUM, TRUNC, LN, ACOS, ACOSH, ASIN, ASINH,
-    ATAN, ATANH, CBRT, COS, COSH, ERF, ERFC, EXP, GAMMA, LGAMMA, LOG, LOG2,
-    LOG10, SIN, SINH, SQRT, TAN, TANH, UPPER, LOWER, CHOMP, CHOP, CHR, CLEAR,
-    COUNT, DOWNCASE, HEX, INSPECT, INTERN, TO_SYM, LENGTH, SIZE, LSTRIP, SUCC,
-    NEXT, OCT, ORD, REVERSE, RSTRIP, STRIP, SWAPCASE, TO_C, TO_F, TO_I, TO_R,
-    UPCASE, P, PP, PUTS, PLUS_ONE, MINUS_ONE, SQUARE, CUBE, FIB, FACTORIAL,
+    # Conditional
+    IF, OR, NOT, AND
+
+    # Random number generation
+    RAND
+
+    # System level integration  
+    SYSTEM
+
+    # Boolean functions
+    ISLOGICAL, ISNONTEXT, ISNUMBER, ISTEXT
+
+    # Math functions
+    ABS, DEGREES, PRODUCT, RADIANS, ROUND, SUM, TRUNC, LN, ACOS,
+    ACOSH, ASIN, ASINH, ATAN, ATANH, CBRT, COS, COSH, ERF, ERFC, EXP, GAMMA,
+    LGAMMA, LOG, LOG2, LOG10, SIN, SINH, SQRT, TAN, TANH
+
+    # String functions
+    CHOMP, CHOP, CHR, CLEAR, COUNT, DOWNCASE, HEX, INSPECT, INTERN, TO_SYM, LENGTH, SIZE,
+    LSTRIP, SUCC, NEXT, OCT, ORD, REVERSE, RSTRIP, STRIP, SWAPCASE, TO_C,
+    TO_F, TO_I, TO_R, UPCASE, CHAR, CLEAN, CODE, CONCATENATE, DOLLAR, EXACT,
+    FIND, FIXED, LEFT, LEN, LOWER, MID, PROPER, REPLACE, REPT, RIGHT,
+    SEARCH, SUBSTITUTE, TRIM, UPPER, VALUE
+
+    # Regular expression functions
+    REGEXP_MATCH, REGEXP_REPLACE
+
+    # Debugging
+    P, PP, PUTS, 
+
+    # Other
+    PLUS_ONE, MINUS_ONE, SQUARE, CUBE, FIB, FACTORIAL,
     TOWERS_OF_HANOI
 
 Loops
@@ -77,7 +127,10 @@ Loops
 There are no looping mechanisms to speak of, but recursion works (pretty) well.  
 **Note:** *go too deep and you might blow the stack!*
 
-    DEFINE SAMPLE_LOOP(a) { PUTS(a) IF(a == 1, 1, SAMPLE_LOOP(a - 1)) }
+    DEFINE SAMPLE_LOOP(a) { 
+      PUTS(a) 
+      IF(a == 1, 1, SAMPLE_LOOP(a - 1)) 
+    }
 
 There are a few examples of loops via recursion in `lib/stdlib.kalc`
 
@@ -97,7 +150,7 @@ For example, here is how you compare 2 variables:
 
     (a == a) && (b = b) \> true
 
-'=' and '==' are both equality operators. Use ':=' for assignment.
+`=` and `==` are both equality operators. Use `:=` for assignment.
 
 More inside
 -----------

@@ -126,13 +126,22 @@ class Kalc::Grammar < Parslet::Parser
     (alpha >> (alpha | digit).repeat) >> spaces?
   }
 
+  rule(:quoted_identifier) {
+    str("'") >> 
+    (
+      str('\\') >> any  | str("'").absnt? >> any
+    ).repeat(1) >>
+    str("'") >> spaces?
+  }
+
   rule(:argument) {
     identifier.as(:argument)
   }
 
   # Should look like 'Name'
   rule(:variable) {
-    identifier | (str("'") >> spaces? >> identifier.repeat >> str("'")) >> spaces?
+    #identifier | (str("'") >> spaces? >> identifier.repeat >> str("'")) >> spaces?
+    identifier | quoted_identifier
   }
 
   # Does not self-evaluate
