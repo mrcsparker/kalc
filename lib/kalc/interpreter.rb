@@ -17,7 +17,7 @@ module Kalc
         env.add_function(:OR, lambda { |cxt, *args|
           retval = false
           args.each do |arg|
-            if arg.eval(cxt) == true
+            if arg.eval(cxt)
               retval = true
               break
             end
@@ -32,7 +32,7 @@ module Kalc
         env.add_function(:AND, lambda { |cxt, *args|
           retval = true
           args.each do |arg|
-            if arg.eval(cxt) == false
+            if !arg.eval(cxt)
               retval = false
               break
             end
@@ -99,15 +99,8 @@ module Kalc
           Math.log(val.eval(cxt))
         })
 
-        math_funs = 
-          [ 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh',
-            'cbrt', 'cos', 'cosh',
-            'erf', 'erfc', 'exp',
-            'gamma',
-            'lgamma', 'log', 'log2', 'log10',
-            'sin', 'sinh', 'sqrt',
-            'tan', 'tanh',
-             ]
+        math_funs =
+            %w(acos acosh asin asinh atan atanh cbrt cos cosh erf erfc exp gamma lgamma log log2 log10 sin sinh sqrt tan tanh)
 
         math_funs.each do |math_fun|
           env.add_function(math_fun.upcase.to_sym, lambda { |cxt, val|
@@ -116,19 +109,8 @@ module Kalc
         end
 
         # Strings
-        string_funs = 
-          [
-            'chomp', 'chop', 'chr', 'clear', 'count',
-            'downcase',
-            'hex', 
-            'inspect', 'intern', 'to_sym',
-            'length', 'size', 'lstrip', 
-            'succ', 'next', 
-            'oct', 'ord',
-            'reverse', 'rstrip',
-            'strip', 'swapcase', 'to_c', 'to_f', 'to_i', 'to_r',
-            'upcase'
-          ]
+        string_funs =
+            %w(chomp chop chr clear count downcase hex inspect intern to_sym length size lstrip succ next oct ord reverse rstrip strip swapcase to_c to_f to_i to_r upcase)
 
         string_funs.each do |str_fun|
           env.add_function(str_fun.upcase.to_sym, lambda { |cxt, val|
@@ -167,7 +149,7 @@ module Kalc
 
         env.add_function(:FIXED, lambda { |cxt, val, decimal_places, no_commas|
           output = "%.#{Integer(decimal_places.eval(cxt))}f" % Float(val.eval(cxt))
-          output = output.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse if no_commas.eval(cxt) == false
+          output = output.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse if !no_commas.eval(cxt)
           output
         })
 

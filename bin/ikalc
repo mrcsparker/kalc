@@ -5,4 +5,4 @@ $LOAD_PATH.unshift(kalc_dir) unless $LOAD_PATH.include?(kalc_dir)
 
 require "kalc"
 
-repl = Kalc::Repl.new.run
+Kalc::Repl.new.run

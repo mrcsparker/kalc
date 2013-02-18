@@ -20,11 +20,7 @@ module Kalc
       puts "You are ready to go.  Have fun!"
       puts ""
 
-      ast = nil
-
-      function_list = [
-        'quit', 'exit', 'functions', 'variables', 'ast'
-      ] + @kalc.interpreter.env.functions.map { |f| f.first }
+      function_list = %w(quit exit functions variables ast) + @kalc.interpreter.env.functions.map { |f| f.first }
 
       begin
         comp = proc { |s| function_list.grep( /^#{Regexp.escape(s)}/ ) }

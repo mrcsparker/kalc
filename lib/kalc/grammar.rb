@@ -44,7 +44,7 @@ class Kalc::Grammar < Parslet::Parser
         if op[0,symbol.length] == symbol
           char = op[symbol.length,1]
 
-          unless (char.nil? || char.empty?)
+          unless char.nil? || char.empty?
             trailing_chars[symbol] << char
           end
         end
@@ -127,7 +127,7 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:quoted_identifier) {
-    str("'") >> 
+    str("'") >>
     (
       str('\\') >> any  | str("'").absnt? >> any
     ).repeat(1) >>
