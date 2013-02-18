@@ -5,7 +5,7 @@ class Kalc::Stdlib
 end
 
 describe Kalc::Stdlib do
-  
+
   before(:each) do
     @grammar = Kalc::Grammar.new
     @transform = Kalc::Transform.new

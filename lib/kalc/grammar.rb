@@ -22,7 +22,7 @@ class Kalc::Grammar < Parslet::Parser
   rule(:new_line) { match('[\n\r]').repeat(1) }
   rule(:separator) { str(';') >> spaces? }
 
-  def self.symbols(symbols) 
+  def self.symbols(symbols)
     symbols.each do |name, symbol|
       rule(name) { str(symbol) >> spaces? }
     end
@@ -37,12 +37,12 @@ class Kalc::Grammar < Parslet::Parser
           :question_mark => '?'
 
   def self.operators(operators={})
-    trailing_chars = Hash.new { |hash,symbol| hash[symbol] = [] }
+    trailing_chars = Hash.new { |hash, symbol| hash[symbol] = [] }
 
     operators.each_value do |symbol|
       operators.each_value do |op|
-        if op[0,symbol.length] == symbol
-          char = op[symbol.length,1]
+        if op[0, symbol.length] == symbol
+          char = op[symbol.length, 1]
 
           unless char.nil? || char.empty?
             trailing_chars[symbol] << char
@@ -51,7 +51,7 @@ class Kalc::Grammar < Parslet::Parser
       end
     end
 
-    operators.each do |name,symbol|
+    operators.each do |name, symbol|
       trailing = trailing_chars[symbol]
 
       if trailing.empty?
@@ -101,12 +101,12 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:string) {
-    str('"') >> 
-    (
-      str('\\') >> any |
-      str('"').absnt? >> any
-    ).repeat.as(:string) >> 
-    str('"')
+    str('"') >>
+        (
+        str('\\') >> any |
+            str('"').absnt? >> any
+        ).repeat.as(:string) >>
+        str('"')
   }
 
   rule(:exponent) {
@@ -116,10 +116,10 @@ class Kalc::Grammar < Parslet::Parser
   # We are using a really broad definition of what a number is.
   # Numbers can be 1, 1.0, 0.1, 1.0e4, +1.0E10, etc
   rule(:number) {
-    (match('[+-]').maybe >> 
-      (str('.') >> digits >> exponent.maybe).as(:number) >> spaces?) |
-    (match('[+-]').maybe >> 
-     digits >> (str('.') >> digits).maybe >> exponent.maybe).as(:number) >> spaces?
+    (match('[+-]').maybe >>
+        (str('.') >> digits >> exponent.maybe).as(:number) >> spaces?) |
+        (match('[+-]').maybe >>
+            digits >> (str('.') >> digits).maybe >> exponent.maybe).as(:number) >> spaces?
   }
 
   rule(:identifier) {
@@ -128,10 +128,10 @@ class Kalc::Grammar < Parslet::Parser
 
   rule(:quoted_identifier) {
     str("'") >>
-    (
-      str('\\') >> any  | str("'").absnt? >> any
-    ).repeat(1) >>
-    str("'") >> spaces?
+        (
+        str('\\') >> any | str("'").absnt? >> any
+        ).repeat(1) >>
+        str("'") >> spaces?
   }
 
   rule(:argument) {
@@ -176,31 +176,31 @@ class Kalc::Grammar < Parslet::Parser
   }
 
   rule(:non_ops_expression) {
-    (atom.as(:left) >> 
-      power_of >>
-      atom.as(:right)).as(:non_ops) | atom
+    (atom.as(:left) >>
+        power_of >>
+        atom.as(:right)).as(:non_ops) | atom
   }
 
   # IF(1, 2, 3)
   # AND(1, 2, ...)
   rule(:function_call_expression) {
     (identifier.as(:name) >> paren_variable_list.as(:variable_list)).as(:function_call) |
-    (str('+') >> non_ops_expression).as(:positive) |
-    (str('-') >> non_ops_expression).as(:negative) | non_ops_expression
+        (str('+') >> non_ops_expression).as(:positive) |
+        (str('-') >> non_ops_expression).as(:negative) | non_ops_expression
   }
 
   # 1 + 2
   rule(:additive_expression) {
-    multiplicative_expression.as(:left) >> 
-      ((add | subtract) >> 
-        multiplicative_expression.as(:right)).repeat.as(:ops)
+    multiplicative_expression.as(:left) >>
+        ((add | subtract) >>
+            multiplicative_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 * 2
   rule(:multiplicative_expression) {
-    function_call_expression.as(:left) >> 
-      ((multiply | divide | modulus) >> 
-        function_call_expression.as(:right)).repeat.as(:ops)
+    function_call_expression.as(:left) >>
+        ((multiply | divide | modulus) >>
+            function_call_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 < 2
@@ -208,49 +208,49 @@ class Kalc::Grammar < Parslet::Parser
   # 1 <= 2
   # 1 >= 2
   rule(:relational_expression) {
-    additive_expression.as(:left) >> 
-      ((less | greater | less_equal | greater_equal) >>
-        relational_expression.as(:right)).repeat.as(:ops)
+    additive_expression.as(:left) >>
+        ((less | greater | less_equal | greater_equal) >>
+            relational_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 = 2
   rule(:equality_expression) {
     relational_expression.as(:left) >>
-      ((excel_equal | equal | not_equal) >>
-        equality_expression.as(:right)).repeat.as(:ops)
+        ((excel_equal | equal | not_equal) >>
+            equality_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 && 2
   rule(:logical_and_expression) {
     equality_expression.as(:left) >>
-      ((logical_and | string_and) >>
-        logical_and_expression.as(:right)).repeat.as(:ops)
+        ((logical_and | string_and) >>
+            logical_and_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 || 2
   rule(:logical_or_expression) {
     logical_and_expression.as(:left) >>
-      ((logical_or | string_or) >>
-        logical_or_expression.as(:right)).repeat.as(:ops)
+        ((logical_or | string_or) >>
+            logical_or_expression.as(:right)).repeat.as(:ops)
   }
 
   # 1 > 2 ? 3 : 4
   rule(:conditional_expression) {
-    logical_or_expression.as(:condition) >> 
-      (question_mark >> 
-        conditional_expression.as(:true_cond) >> 
-        colon >> 
-        conditional_expression.as(:false_cond)).maybe
+    logical_or_expression.as(:condition) >>
+        (question_mark >>
+            conditional_expression.as(:true_cond) >>
+            colon >>
+            conditional_expression.as(:false_cond)).maybe
   }
 
   # 'a' = 1
   # We don't allow for nested assignments:
   # IF('a' = 1, 1, 2)
   rule(:assignment_expression) {
-    (variable.as(:identifier) >> 
-      assign >> 
-      assignment_expression.as(:value)).as(:assign) |
-    conditional_expression
+    (variable.as(:identifier) >>
+        assign >>
+        assignment_expression.as(:value)).as(:assign) |
+        conditional_expression
   }
 
   rule(:expression) {
@@ -267,9 +267,9 @@ class Kalc::Grammar < Parslet::Parser
 
   rule(:function_definition_expression) {
     (str('DEFINE') >> spaces? >> identifier.as(:name) >>
-         paren_argument_list.as(:argument_list) >>
-         left_brace >> function_body.as(:body) >> right_brace).as(:function_definition) |
-    expressions.as(:expressions)
+        paren_argument_list.as(:argument_list) >>
+        left_brace >> function_body.as(:body) >> right_brace).as(:function_definition) |
+        expressions.as(:expressions)
   }
 
   rule(:function_definition_expressions) {

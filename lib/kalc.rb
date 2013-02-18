@@ -11,7 +11,7 @@ require 'kalc/repl'
 
 module Kalc
   class Runner
-    
+
     attr_accessor :grammar
     attr_accessor :transform
     attr_accessor :interpreter

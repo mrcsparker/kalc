@@ -10,9 +10,9 @@ describe Kalc::Interpreter do
   it { evaluate("1 + 1").should == 2.0 }
   it { evaluate("4 + 1").should == 5 }
   it { evaluate("5 + 5").should == 10 }
-  
+
   it { evaluate("5 / 5").should == 1 }
-  
+
   it { evaluate("5 / 4 / 2").should == 0.625 }
   it { evaluate("5/4/2").should == 0.625 }
 
@@ -40,7 +40,7 @@ describe Kalc::Interpreter do
   it "should be able to load single quoted variables" do
     evaluate("'a' := 1; 1 + 'a'").should == 2
     evaluate("'a' := 1; 'b' := 2; 'b' + 'a'").should == 3
-  
+
     evaluate("'a b' := 1; 'a b' + 1").should == 2
   end
 

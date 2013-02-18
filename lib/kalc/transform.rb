@@ -1,24 +1,24 @@
 module Kalc
   class Transform < Parslet::Transform
 
-    rule(:condition => subtree(:condition)) { 
-      condition 
+    rule(:condition => subtree(:condition)) {
+      condition
     }
 
-    rule(:left => subtree(:left), :ops => []) { 
-      left 
+    rule(:left => subtree(:left), :ops => []) {
+      left
     }
 
-    rule(:right => subtree(:right), :ops => []) { 
-      right 
+    rule(:right => subtree(:right), :ops => []) {
+      right
     }
 
-    rule(:left => subtree(:left), :non_ops => []) { 
-      left 
+    rule(:left => subtree(:left), :non_ops => []) {
+      left
     }
 
-    rule(:right => subtree(:right), :non_ops => []) { 
-      right 
+    rule(:right => subtree(:right), :non_ops => []) {
+      right
     }
 
     rule(:commands => sequence(:commands)) {
@@ -53,8 +53,8 @@ module Kalc
       Ast::BooleanValue.new(boolean)
     }
 
-    rule(:number => simple(:number)) { 
-      Ast::FloatingPointNumber.new(number) 
+    rule(:number => simple(:number)) {
+      Ast::FloatingPointNumber.new(number)
     }
 
     rule(:non_ops => subtree(:non_ops)) {
@@ -65,11 +65,11 @@ module Kalc
       Ast::Ops.new(left, ops)
     }
 
-    rule(:left => simple(:left), :right => simple(:right), :operator => simple(:operator)) { 
+    rule(:left => simple(:left), :right => simple(:right), :operator => simple(:operator)) {
       Ast::Arithmetic.new(left, right, operator)
     }
 
-    rule(:condition => simple(:condition), :true_cond => simple(:true_cond), :false_cond => simple(:false_cond)) { 
+    rule(:condition => simple(:condition), :true_cond => simple(:true_cond), :false_cond => simple(:false_cond)) {
       Ast::Conditional.new(condition, true_cond, false_cond)
     }
 
@@ -98,7 +98,7 @@ module Kalc
     }
 
     rule(:function_call => {:name => simple(:name),
-         :variable_list => sequence(:variable_list)}) {
+                            :variable_list => sequence(:variable_list)}) {
       Ast::FunctionCall.new(name, variable_list)
     }
 
@@ -107,8 +107,8 @@ module Kalc
     }
 
     rule(:function_definition => {:name => simple(:name),
-         :argument_list => sequence(:argument_list),
-         :body => simple(:body)}) {
+                                  :argument_list => sequence(:argument_list),
+                                  :body => simple(:body)}) {
       Ast::FunctionDefinition.new(name, argument_list, body)
     }
   end

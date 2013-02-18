@@ -117,7 +117,7 @@ module Kalc
     class Ops
       attr_reader :left
       attr_reader :ops
-      
+
       def initialize(left, ops)
         @left = left
         @ops = ops
@@ -145,40 +145,40 @@ module Kalc
 
       def eval(context)
         case @operator.to_s.strip
-        when '&&'
-          @left && @right
-        when 'and'
-          @left && @right
-        when '||'
-          @left || @right
-        when 'or'
-          @left || @right
-        when '<='
-          @left <= @right
-        when '>='
-          @left >= @right
-        when '='
-          @left == @right
-        when '=='
-          @left == @right
-        when '!='
-          @left != @right
-        when '-'
-          @left - @right
-        when '+'
-          @left + @right
-        when '^'
-          @left ** @right
-        when '*'
-          @left * @right
-        when '/'
-          @left / @right
-        when '%'
-          @left % @right
-        when '<'
-          @left < @right
-        when '>'
-          @left > @right
+          when '&&'
+            @left && @right
+          when 'and'
+            @left && @right
+          when '||'
+            @left || @right
+          when 'or'
+            @left || @right
+          when '<='
+            @left <= @right
+          when '>='
+            @left >= @right
+          when '='
+            @left == @right
+          when '=='
+            @left == @right
+          when '!='
+            @left != @right
+          when '-'
+            @left - @right
+          when '+'
+            @left + @right
+          when '^'
+            @left ** @right
+          when '*'
+            @left * @right
+          when '/'
+            @left / @right
+          when '%'
+            @left % @right
+          when '<'
+            @left < @right
+          when '>'
+            @left > @right
         end
       end
     end
@@ -213,6 +213,7 @@ module Kalc
 
     class Variable
       attr_reader :variable
+
       def initialize(variable)
         @variable = variable
       end
