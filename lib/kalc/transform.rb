@@ -89,7 +89,7 @@ module Kalc
       paren_list
     }
 
-    rule(:paren_list => "()") {
+    rule(:paren_list => '()') {
       []
     }
 

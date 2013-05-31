@@ -179,7 +179,7 @@ module Kalc
         })
 
         env.add_function(:PROPER, lambda { |cxt, val|
-          val.eval(cxt).split(" ").map { |c| c.capitalize }.join(" ")
+          val.eval(cxt).split(' ').map { |c| c.capitalize }.join(' ')
         })
 
         env.add_function(:REPLACE, lambda { |cxt, val, start_position, number_of_chars, new_text|

@@ -40,13 +40,13 @@ module Kalc
 
     private
     def load_environment
-      @log.debug "Loading grammar" if @debug
+      @log.debug 'Loading grammar' if @debug
       @grammar = Kalc::Grammar.new
-      @log.debug "Loading transform" if @debug
+      @log.debug 'Loading transform' if @debug
       @transform = Kalc::Transform.new
-      @log.debug "Loading interpreter" if @debug
+      @log.debug 'Loading interpreter' if @debug
       @interpreter = Kalc::Interpreter.new
-      @log.debug "Loading stdlib" if @debug
+      @log.debug 'Loading stdlib' if @debug
       @interpreter.load_stdlib(@grammar, @transform)
     end
   end
