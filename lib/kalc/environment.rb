@@ -1,6 +1,5 @@
 module Kalc
   class Environment
-
     attr_reader :functions
     attr_reader :variables
 
@@ -12,7 +11,7 @@ module Kalc
     end
 
     def add_function(name, value)
-      @functions.update({name.to_s.strip => value})
+      @functions.update({ name.to_s.strip => value })
     end
 
     def get_function(name)
@@ -26,7 +25,7 @@ module Kalc
     end
 
     def add_variable(name, value)
-      @variables.update({name.to_s.strip => value})
+      @variables.update({ name.to_s.strip => value })
       value
     end
 

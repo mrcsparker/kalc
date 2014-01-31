@@ -1,11 +1,10 @@
 # Started with https://github.com/postmodern/cparser code
 # which is based on http://www.lysator.liu.se/c/ANSI-C-grammar-y.html
 # and worked from there
-# 
+#
 # The second link really helped when it came to functions
 
 class Kalc::Grammar < Parslet::Parser
-
   rule(:new_line) { match('[\n\r]').repeat(1) }
 
   rule(:space) { match('[ \t\v\n\f]') }
@@ -36,7 +35,7 @@ class Kalc::Grammar < Parslet::Parser
           :colon => ':',
           :question_mark => '?'
 
-  def self.operators(operators={})
+  def self.operators(operators = {})
     trailing_chars = Hash.new { |hash, symbol| hash[symbol] = [] }
 
     operators.each_value do |symbol|
@@ -290,4 +289,3 @@ class Kalc::Grammar < Parslet::Parser
 
   root :lines
 end
-

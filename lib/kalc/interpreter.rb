@@ -4,7 +4,6 @@ require 'pp'
 
 module Kalc
   class Interpreter
-
     attr_accessor :env
 
     def initialize
@@ -111,10 +110,11 @@ module Kalc
         # Strings
         string_funs =
             %w(chomp chop chr clear count
-            downcase
-            hex
-            inspect intern
-            to_sym length size lstrip succ next oct ord reverse rstrip strip swapcase to_c to_f to_i to_r upcase)
+               downcase
+               hex
+               inspect intern
+               to_sym length size lstrip succ next oct ord reverse rstrip strip
+               swapcase to_c to_f to_i to_r upcase)
 
         string_funs.each do |str_fun|
           env.add_function(str_fun.upcase.to_sym, lambda { |cxt, val|

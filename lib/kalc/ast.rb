@@ -1,6 +1,5 @@
 module Kalc
   module Ast
-
     class Commands
       attr_reader :commands
 
@@ -129,7 +128,6 @@ module Kalc
           a.eval(context)
         }
       end
-
     end
 
     class Arithmetic
@@ -145,40 +143,40 @@ module Kalc
 
       def eval(context)
         case @operator.to_s.strip
-          when '&&'
-            @left && @right
-          when 'and'
-            @left && @right
-          when '||'
-            @left || @right
-          when 'or'
-            @left || @right
-          when '<='
-            @left <= @right
-          when '>='
-            @left >= @right
-          when '='
-            @left == @right
-          when '=='
-            @left == @right
-          when '!='
-            @left != @right
-          when '-'
-            @left - @right
-          when '+'
-            @left + @right
-          when '^'
-            @left ** @right
-          when '*'
-            @left * @right
-          when '/'
-            @left / @right
-          when '%'
-            @left % @right
-          when '<'
-            @left < @right
-          when '>'
-            @left > @right
+        when '&&'
+          @left && @right
+        when 'and'
+          @left && @right
+        when '||'
+          @left || @right
+        when 'or'
+          @left || @right
+        when '<='
+          @left <= @right
+        when '>='
+          @left >= @right
+        when '='
+          @left == @right
+        when '=='
+          @left == @right
+        when '!='
+          @left != @right
+        when '-'
+          @left - @right
+        when '+'
+          @left + @right
+        when '^'
+          @left**@right
+        when '*'
+          @left * @right
+        when '/'
+          @left / @right
+        when '%'
+          @left % @right
+        when '<'
+          @left < @right
+        when '>'
+          @left > @right
         end
       end
     end
