@@ -69,11 +69,12 @@ describe Kalc::Interpreter do
     it { evaluate('FALSE && TRUE').should == false }
   end
 
-  context 'Floating point number' do
+  context 'Decimal numbers' do
     it { evaluate('1.01').should == 1.01 }
     it { evaluate('1.01 + 0.02').should == 1.03 }
     it { evaluate('1.01 - 0.01').should == 1 }
     it { evaluate('1.1 + 1.1').should == 2.2 }
+    it { evaluate('1.2 - 1.0').should == 0.2 }
     it { evaluate('1.01 = 1.01').should == true }
     it { evaluate('1.01 = 1.02').should == false }
   end

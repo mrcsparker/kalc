@@ -77,15 +77,15 @@ module Kalc
       end
     end
 
-    class FloatingPointNumber
+    class BigDecimalNumber
       attr_reader :value
 
       def initialize(value)
-        @value = value
+        @value = BigDecimal.new(value.to_s)
       end
 
       def eval(context)
-        Float(@value)
+        BigDecimal.new(@value)
       end
     end
 
