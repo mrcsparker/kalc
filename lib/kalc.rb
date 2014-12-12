@@ -8,6 +8,7 @@ require 'kalc/transform'
 require 'kalc/environment'
 require 'kalc/interpreter'
 require 'kalc/repl'
+require 'bigdecimal'
 
 module Kalc
   class Runner

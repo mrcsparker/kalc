@@ -20,10 +20,10 @@ functionality.
 Numbers
 -------
 
-All numbers are floating point.
+All numbers are BigDecimal ruby class numbers for precision.
 
-    1 => 1.0 
-    2.020 => 2.02 
+    1 => 1.0
+    2.020 => 2.02
     1.23E => 12300000000.0
 
 Arithmetic
@@ -37,7 +37,7 @@ Arithmetic is standard infix with nesting via parenthesis.
 Logical operations
 ------------------
 
-    2 < 1 ? 1 : 3 # Ternary 
+    2 < 1 ? 1 : 3 # Ternary
     (1 || 2) # 1.0
     2 or 3 # 2.0
     OR(1 > 2, 3 < 2, 8 == 8) # true
@@ -47,7 +47,7 @@ Variable assignment
 
 The assignment operator `:=` is borrowed from Pascal.  This decision was
 made for practical reason.  Since comparison operators are both `=` and
-`==` and the language is expression-based, `=` could not be chosen. 
+`==` and the language is expression-based, `=` could not be chosen.
 
 Variables come in a lot of different flavors.
 
@@ -98,7 +98,7 @@ Some of them are:
     # Random number generation
     RAND
 
-    # System level integration  
+    # System level integration
     SYSTEM
 
     # Boolean functions
@@ -120,7 +120,7 @@ Some of them are:
     REGEXP_MATCH, REGEXP_REPLACE
 
     # Debugging
-    P, PP, PUTS, 
+    P, PP, PUTS,
 
     # Other
     PLUS_ONE, MINUS_ONE, SQUARE, CUBE, FIB, FACTORIAL,
@@ -129,12 +129,12 @@ Some of them are:
 Loops
 -----
 
-There are no looping mechanisms to speak of, but recursion works (pretty) well.  
+There are no looping mechanisms to speak of, but recursion works (pretty) well.
 **Note:** *go too deep and you might blow the stack!*
 
-    DEFINE SAMPLE_LOOP(a) { 
-      PUTS(a) 
-      IF(a == 1, 1, SAMPLE_LOOP(a - 1)) 
+    DEFINE SAMPLE_LOOP(a) {
+      PUTS(a)
+      IF(a == 1, 1, SAMPLE_LOOP(a - 1))
     }
 
 There are a few examples of loops via recursion in `lib/stdlib.kalc`

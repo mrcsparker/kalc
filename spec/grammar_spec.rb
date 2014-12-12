@@ -9,7 +9,7 @@ describe Kalc::Grammar do
     end
   end
 
-  context 'floats' do
+  context 'decimal numbers' do
     1.upto(10) do |i|
       1.upto(10) do |n|
         it { grammar.should parse("#{i}.#{n}") }
@@ -27,7 +27,7 @@ describe Kalc::Grammar do
     end
   end
 
-  context 'basic float math' do
+  context 'basic decimal math' do
     1.upto(10) do |i|
       1.upto(10) do |n|
         it { grammar.should parse("#{i}.#{n} - #{i}.#{n}") }

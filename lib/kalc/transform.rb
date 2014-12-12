@@ -54,7 +54,7 @@ module Kalc
     }
 
     rule(:number => simple(:number)) {
-      Ast::FloatingPointNumber.new(number)
+      Ast::BigDecimalNumber.new(number)
     }
 
     rule(:non_ops => subtree(:non_ops)) {

@@ -139,7 +139,7 @@ module Kalc
         })
 
         env.add_function(:DOLLAR, lambda { |cxt, val, decimal_places|
-          "%.#{Integer(decimal_places.eval(cxt))}f" % Float(val.eval(cxt))
+          "%.#{Integer(decimal_places.eval(cxt))}f" % BigDecimal.new(val.eval(cxt))
         })
 
         env.add_function(:EXACT, lambda { |cxt, string1, string2|
@@ -152,7 +152,7 @@ module Kalc
         })
 
         env.add_function(:FIXED, lambda { |cxt, val, decimal_places, no_commas|
-          output = "%.#{Integer(decimal_places.eval(cxt))}f" % Float(val.eval(cxt))
+          output = "%.#{Integer(decimal_places.eval(cxt))}f" % BigDecimal.new(val.eval(cxt))
           output = output.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse if !no_commas.eval(cxt)
           output
         })
