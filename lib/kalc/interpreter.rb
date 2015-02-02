@@ -98,6 +98,14 @@ module Kalc
           Math.log(val.eval(cxt))
         })
 
+        env.add_function(:MAX, lambda { |cxt, *args|
+          args.max_by { |a| a.eval(cxt) }.eval(cxt)
+        })
+
+        env.add_function(:MIN, lambda { |cxt, *args|
+          args.min_by { |a| a.eval(cxt) }.eval(cxt)
+        })
+
         math_funs =
             %w(acos acosh asin asinh atan atanh cbrt cos cosh erf erfc exp gamma lgamma log log2 log10 sin sinh sqrt tan tanh)
 
