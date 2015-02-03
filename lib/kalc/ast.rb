@@ -217,7 +217,9 @@ module Kalc
       end
 
       def eval(context)
-        context.get_variable(@variable)
+        var = context.get_variable(@variable)
+        fail "Invalid variable: #{@variable}" unless var
+        var
       end
     end
 
@@ -244,7 +246,11 @@ module Kalc
 
       def eval(context)
         to_call = context.get_function(@name)
-        to_call.call(context, *@variable_list) if to_call
+        fail "Unknown function #{@name}" unless to_call
+        to_call.call(context, *@variable_list)
+      rescue ArgumentError
+        fail "Argument Error. Function #{@name} was called with #{@variable_list.count} parameters. " +
+          "It needs at least #{to_call.parameters.select{|a| a.first == :req}.count - 1 } parameters"
       end
     end
 
