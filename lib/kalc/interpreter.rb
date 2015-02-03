@@ -98,12 +98,12 @@ module Kalc
           Math.log(val.eval(cxt))
         })
 
-        env.add_function(:MAX, lambda { |cxt, *args|
-          args.max_by { |a| a.eval(cxt) }.eval(cxt)
+        env.add_function(:MAX, lambda { |cxt, first, *args|
+          (args<<first).map { |a| a.eval(cxt) }.max
         })
 
-        env.add_function(:MIN, lambda { |cxt, *args|
-          args.min_by { |a| a.eval(cxt) }.eval(cxt)
+        env.add_function(:MIN, lambda { |cxt, first, *args|
+          (args<<first).map { |a| a.eval(cxt) }.min
         })
 
         math_funs =
