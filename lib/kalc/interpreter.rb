@@ -246,6 +246,14 @@ module Kalc
           puts output.eval(cxt)
         })
 
+        env.add_function(:FLOOR, lambda { |cxt, val|
+          val.eval(cxt).floor
+        })
+
+        env.add_function(:CEILING, lambda { |cxt, val|
+          val.eval(cxt).ceil
+        })
+
       end
     end
 
