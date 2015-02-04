@@ -93,7 +93,7 @@ describe Kalc::Interpreter do
     it { evaluate('.4').should == 0.4 }
   end
 
-  context 'Functions' do
+  context 'Min and Max Functions' do
     it { evaluate('MAX(3, 1, 2)').should == 3 }
     it { evaluate('MAX(-1, 2*4, (3-1)*2, 5, 6)').should == 8 }
     it { evaluate('MIN(3, 1, 2)').should == 1 }
@@ -101,6 +101,22 @@ describe Kalc::Interpreter do
     context 'having variables' do
       it { evaluate('var := 15; MAX(1, var, 10)').should == 15 }
       it { evaluate('var := 15; MIN(1, var, -10)').should == -10 }
+    end
+  end
+
+  context 'Ceil and Floor functions' do
+    it { evaluate('FLOOR(3.4)').should == 3 }
+    it { evaluate('FLOOR(3.8)').should == 3 }
+    it { evaluate('FLOOR(-3.4)').should == -4 }
+    it { evaluate('FLOOR(3)').should == 3 }
+    it { evaluate('CEILING(3)').should == 3 }
+    it { evaluate('CEILING(3.8)').should == 4 }
+    it { evaluate('CEILING(3.8)').should == 4 }
+    it { evaluate('CEILING(-3.2)').should == -3 }
+
+    context 'having variables' do
+      it { evaluate('var := 2.456; FLOOR(var)').should == 2 }
+      it { evaluate('var := 2.444; CEILING(var)').should == 3 }
     end
   end
 
