@@ -93,6 +93,17 @@ describe Kalc::Interpreter do
     it { evaluate('.4').should == 0.4 }
   end
 
+  context 'Min and Max Functions' do
+    it { evaluate('MAX(3, 1, 2)').should == 3 }
+    it { evaluate('MAX(-1, 2*4, (3-1)*2, 5, 6)').should == 8 }
+    it { evaluate('MIN(3, 1, 2)').should == 1 }
+    it { evaluate('MIN(-1, 2*4, (3-1)*2, 5, 6)').should == -1 }
+    context 'having variables' do
+      it { evaluate('var := 15; MAX(1, var, 10)').should == 15 }
+      it { evaluate('var := 15; MIN(1, var, -10)').should == -10 }
+    end
+  end
+
   context 'Ceil and Floor functions' do
     it { evaluate('FLOOR(3.4)').should == 3 }
     it { evaluate('FLOOR(3.8)').should == 3 }

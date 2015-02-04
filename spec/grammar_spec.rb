@@ -106,4 +106,15 @@ describe Kalc::Grammar do
     it { grammar.should parse('IF(3 > 2, IF(2 < 3, 1, 3), IF(5 > 1, 3, 9))') }
   end
 
+  context 'MAX statements' do
+    it { grammar.should parse('MAX(3, 1, 2)') }
+    it { grammar.should parse('MAX(-1, 2*4, (3-1)*2, 5, 6)') }
+    it { grammar.should parse('MAX(1, var, 10)') }
+  end
+
+  context 'MIN statements' do
+    it { grammar.should parse('MIN(3, 1, 2)') }
+    it { grammar.should parse('MIN(-1, 2*4, (3-1)*2, 5, 6)') }
+    it { grammar.should parse('MIN(1, -var, 10)') }
+  end
 end
