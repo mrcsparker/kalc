@@ -205,7 +205,7 @@ module Kalc
       end
 
       def eval(context)
-        context.add_variable(@variable, @value.eval(context))
+        context.add_variable(@variable, @value)
       end
     end
 
@@ -219,7 +219,7 @@ module Kalc
       def eval(context)
         var = context.get_variable(@variable)
         fail "Invalid variable: #{@variable}" unless var
-        var
+        var.class == BigDecimal ? var : var.eval(context)
       end
     end
 
