@@ -120,6 +120,12 @@ describe Kalc::Interpreter do
     end
   end
 
+  context 'Round function' do
+    it { evaluate('ROUND(3.256,2)').should eq(3.26) }
+    it { evaluate('ROUND(3.2,2)').should eq(3.20) }
+    it { evaluate('ROUND(233.256,-2)').should eq(200) }
+  end
+
   private
   def evaluate(expression)
     g = @grammar.parse(expression)
