@@ -83,7 +83,7 @@ module Kalc
         })
 
         env.add_function(:ROUND, lambda { |cxt, num, digits|
-          num.eval(cxt).round(digits.eval(cxt))
+          num.eval(cxt).round(digits.eval(cxt).to_i)
         })
 
         env.add_function(:SUM, lambda { |cxt, *args|
