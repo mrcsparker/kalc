@@ -107,7 +107,7 @@ Some of them are:
     # Math functions
     ABS, DEGREES, PRODUCT, RADIANS, ROUND, SUM, TRUNC, LN, ACOS,
     ACOSH, ASIN, ASINH, ATAN, ATANH, CBRT, COS, COSH, ERF, ERFC, EXP, GAMMA,
-    LGAMMA, LOG, LOG2, LOG10, SIN, SINH, SQRT, TAN, TANH, MIN, MAX
+    LGAMMA, LOG, LOG2, LOG10, SIN, SINH, SQRT, TAN, TANH, MIN, MAX, FLOOR, CEILING
 
     # String functions
     CHOMP, CHOP, CHR, CLEAR, COUNT, DOWNCASE, HEX, INSPECT, INTERN, TO_SYM, LENGTH, SIZE,
@@ -125,6 +125,8 @@ Some of them are:
     # Other
     PLUS_ONE, MINUS_ONE, SQUARE, CUBE, FIB, FACTORIAL,
     TOWERS_OF_HANOI
+
+FLOOR and CEILING functions acts as the mathematical definition of floor and ceil, meaning that it has a fixed significance value of 1.
 
 Loops
 -----
