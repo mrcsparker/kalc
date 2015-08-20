@@ -5,10 +5,6 @@ module Kalc
       condition
     }
 
-    rule(:left => subtree(:left), :ops => []) {
-      left
-    }
-
     rule(:right => subtree(:right), :ops => []) {
       right
     }
@@ -62,7 +58,7 @@ module Kalc
     }
 
     rule(:left => simple(:left), :ops => subtree(:ops)) {
-      Ast::Ops.new(left, ops)
+      ops.empty? ? left : Ast::Ops.new(left, ops)
     }
 
     rule(:left => simple(:left), :right => simple(:right), :operator => simple(:operator)) {
