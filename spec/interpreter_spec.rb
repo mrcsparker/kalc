@@ -6,124 +6,124 @@ describe Kalc::Interpreter do
     @transform = Kalc::Transform.new
   end
 
-  it { evaluate('2 + 2').should == 4 }
-  it { evaluate('1 + 1').should == 2.0 }
-  it { evaluate('4 + 1').should == 5 }
-  it { evaluate('5 + 5').should == 10 }
+  it { expect(evaluate('2 + 2')).to eq(4) }
+  it { expect(evaluate('1 + 1')).to eq(2.0) }
+  it { expect(evaluate('4 + 1')).to eq(5) }
+  it { expect(evaluate('5 + 5')).to eq(10) }
 
-  it { evaluate('5 / 5').should == 1 }
+  it { expect(evaluate('5 / 5')).to eq(1) }
 
-  it { evaluate('5 / 4 / 2').should == 0.625 }
-  it { evaluate('5/4/2').should == 0.625 }
+  it { expect(evaluate('5 / 4 / 2')).to eq(0.625) }
+  it { expect(evaluate('5/4/2')).to eq(0.625) }
 
-  it { evaluate('6 * 2 / 3').should == 4 }
+  it { expect(evaluate('6 * 2 / 3')).to eq(4) }
 
-  it { evaluate('10 > 9').should == true }
-  it { evaluate('10 < 9').should == false }
+  it { expect(evaluate('10 > 9')).to eq(true) }
+  it { expect(evaluate('10 < 9')).to eq(false) }
 
-  it { evaluate('10 + 19 + 11 * 3').should == 62 }
+  it { expect(evaluate('10 + 19 + 11 * 3')).to eq(62) }
 
-  it { evaluate('10 >= 10').should == true }
+  it { expect(evaluate('10 >= 10')).to eq(true) }
 
-  it { evaluate('ABS(-1 + -2)').should == 3 }
+  it { expect(evaluate('ABS(-1 + -2)')).to eq(3) }
 
   it 'should be able to load variables' do
-    evaluate('a := 1; 1 + a').should == 2
-    evaluate('a := 1; b := 2; 1 + b').should == 3
+    expect(evaluate('a := 1; 1 + a')).to eq(2)
+    expect(evaluate('a := 1; b := 2; 1 + b')).to eq(3)
   end
 
   it 'should be able to load quoted variables' do
-    evaluate("'Item (a)' := 1; 1 + 'Item (a)'").should == 2
-    evaluate("'a' := 1; 'b[a]' := 2 + 'a'; 1 + 'b[a]'").should == 4
+    expect(evaluate("'Item (a)' := 1; 1 + 'Item (a)'")).to eq(2)
+    expect(evaluate("'a' := 1; 'b[a]' := 2 + 'a'; 1 + 'b[a]'")).to eq(4)
   end
 
   it 'should be able to load single quoted variables' do
-    evaluate("'a' := 1; 1 + 'a'").should == 2
-    evaluate("'a' := 1; 'b' := 2; 'b' + 'a'").should == 3
+    expect(evaluate("'a' := 1; 1 + 'a'")).to eq(2)
+    expect(evaluate("'a' := 1; 'b' := 2; 'b' + 'a'")).to eq(3)
 
-    evaluate("'a b' := 1; 'a b' + 1").should == 2
+    expect(evaluate("'a b' := 1; 'a b' + 1")).to eq(2)
   end
 
-  it { evaluate('((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0))').should == 15000 }
+  it { expect(evaluate('((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0))')).to eq(15000) }
 
-  it { evaluate('(((40.0)/1000*(4380.0)*(200.0))-((40.0)/1000*(4380.0)*((((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0)))/(10.0)/(40.0)/(0.8))))*(0.05)').should == 1341.375 }
+  it { expect(evaluate('(((40.0)/1000*(4380.0)*(200.0))-((40.0)/1000*(4380.0)*((((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0)))/(10.0)/(40.0)/(0.8))))*(0.05)')).to eq(1341.375) }
 
   context 'Negative numbers' do
-    it { evaluate('-2').should == -2 }
-    it { evaluate('-1000').should == -1000 }
-    it { evaluate('-1000.0001').should == -1000.0001 }
-    it { evaluate('1 + -1').should == 0 }
-    it { evaluate('1 + -10').should == -9 }
+    it { expect(evaluate('-2')).to eq(-2) }
+    it { expect(evaluate('-1000')).to eq(-1000) }
+    it { expect(evaluate('-1000.0001')).to eq(-1000.0001) }
+    it { expect(evaluate('1 + -1')).to eq(0 )}
+    it { expect(evaluate('1 + -10')).to eq(-9) }
   end
 
   context 'Positive numbers' do
-    it { evaluate('1 + +1').should == 2 }
-    it { evaluate('1 + +1 - 1').should == 1 }
-    it { evaluate('+10000.0001').should == 10000.0001 }
+    it { expect(evaluate('1 + +1')).to eq(2) }
+    it { expect(evaluate('1 + +1 - 1')).to eq(1) }
+    it { expect(evaluate('+10000.0001')).to eq(10000.0001) }
   end
 
   context 'Boolean value' do
-    it { evaluate('TRUE').should == true }
-    it { evaluate('FALSE').should == false }
-    it { evaluate('FALSE || TRUE').should == true }
-    it { evaluate('FALSE && TRUE').should == false }
+    it { expect(evaluate('TRUE')).to eq(true) }
+    it { expect(evaluate('FALSE')).to eq(false) }
+    it { expect(evaluate('FALSE || TRUE')).to eq(true) }
+    it { expect(evaluate('FALSE && TRUE')).to  eq(false) }
   end
 
   context 'Decimal numbers' do
-    it { evaluate('1.01').should == 1.01 }
-    it { evaluate('1.01 + 0.02').should == 1.03 }
-    it { evaluate('1.01 - 0.01').should == 1 }
-    it { evaluate('1.1 + 1.1').should == 2.2 }
-    it { evaluate('1.2 - 1.0').should == 0.2 }
-    it { evaluate('1.01 = 1.01').should == true }
-    it { evaluate('1.01 = 1.02').should == false }
+    it { expect(evaluate('1.01')).to eq(1.01) }
+    it { expect(evaluate('1.01 + 0.02')).to eq(1.03) }
+    it { expect(evaluate('1.01 - 0.01')).to eq(1) }
+    it { expect(evaluate('1.1 + 1.1')).to eq(2.2) }
+    it { expect(evaluate('1.2 - 1.0')).to eq(0.2) }
+    it { expect(evaluate('1.01 = 1.01')).to eq(true) }
+    it { expect(evaluate('1.01 = 1.02')).to eq(false) }
   end
 
   context 'Ternary' do
-    it { evaluate('1 > 2 ? 1 : 2').should == 2 }
+    it { expect(evaluate('1 > 2 ? 1 : 2')).to eq(2) }
   end
 
   context 'Exponents' do
-    it { evaluate('1.23e+10').should == 12300000000.0 }
-    it { evaluate('1.23e-10').should == 1.23e-10 }
+    it { expect(evaluate('1.23e+10')).to eq(12300000000.0) }
+    it { expect(evaluate('1.23e-10')).to eq(1.23e-10) }
   end
 
   context 'Numbers starting with a decimal point' do
-    it { evaluate('0.4').should == 0.4 }
-    it { evaluate('.4').should == 0.4 }
+    it { expect(evaluate('0.4')).to eq(0.4) }
+    it { expect(evaluate('.4')).to eq(0.4) }
   end
 
   context 'Min and Max Functions' do
-    it { evaluate('MAX(3, 1, 2)').should == 3 }
-    it { evaluate('MAX(-1, 2*4, (3-1)*2, 5, 6)').should == 8 }
-    it { evaluate('MIN(3, 1, 2)').should == 1 }
-    it { evaluate('MIN(-1, 2*4, (3-1)*2, 5, 6)').should == -1 }
+    it { expect(evaluate('MAX(3, 1, 2)')).to eq(3) }
+    it { expect(evaluate('MAX(-1, 2*4, (3-1)*2, 5, 6)')).to eq(8) }
+    it { expect(evaluate('MIN(3, 1, 2)')).to eq(1) }
+    it { expect(evaluate('MIN(-1, 2*4, (3-1)*2, 5, 6)')).to eq(-1) }
     context 'having variables' do
-      it { evaluate('var := 15; MAX(1, var, 10)').should == 15 }
-      it { evaluate('var := 15; MIN(1, var, -10)').should == -10 }
+      it { expect(evaluate('var := 15; MAX(1, var, 10)')).to eq(15) }
+      it { expect(evaluate('var := 15; MIN(1, var, -10)')).to eq(-10) }
     end
   end
 
   context 'Ceil and Floor functions' do
-    it { evaluate('FLOOR(3.4)').should == 3 }
-    it { evaluate('FLOOR(3.8)').should == 3 }
-    it { evaluate('FLOOR(-3.4)').should == -4 }
-    it { evaluate('FLOOR(3)').should == 3 }
-    it { evaluate('CEILING(3)').should == 3 }
-    it { evaluate('CEILING(3.8)').should == 4 }
-    it { evaluate('CEILING(3.8)').should == 4 }
-    it { evaluate('CEILING(-3.2)').should == -3 }
+    it { expect(evaluate('FLOOR(3.4)')).to eq(3) }
+    it { expect(evaluate('FLOOR(3.8)')).to eq(3) }
+    it { expect(evaluate('FLOOR(-3.4)')).to eq(-4) }
+    it { expect(evaluate('FLOOR(3)')).to eq(3) }
+    it { expect(evaluate('CEILING(3)')).to eq(3) }
+    it { expect(evaluate('CEILING(3.8)')).to eq(4) }
+    it { expect(evaluate('CEILING(3.8)')).to eq(4) }
+    it { expect(evaluate('CEILING(-3.2)')).to eq(-3) }
 
     context 'having variables' do
-      it { evaluate('var := 2.456; FLOOR(var)').should == 2 }
-      it { evaluate('var := 2.444; CEILING(var)').should == 3 }
+      it { expect(evaluate('var := 2.456; FLOOR(var)')).to eq(2) }
+      it { expect(evaluate('var := 2.444; CEILING(var)')).to eq(3) }
     end
   end
 
   context 'Round function' do
-    it { evaluate('ROUND(3.256,2)').should eq(3.26) }
-    it { evaluate('ROUND(3.2,2)').should eq(3.20) }
-    it { evaluate('ROUND(233.256,-2)').should eq(200) }
+    it { expect(evaluate('ROUND(3.256,2)')).to eq(3.26) }
+    it { expect(evaluate('ROUND(3.2,2)')).to eq(3.20) }
+    it { expect(evaluate('ROUND(233.256,-2)')).to eq(200) }
   end
 
   private

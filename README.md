@@ -10,6 +10,17 @@ ikalc
 kalc comes with its own repl, known as `ikalc`. Start it up in your console by
 typing in `ikalc`
 
+The Awesomest Contributors in the World!
+----------------------------------------
+
+These people have made kalc a much more awesome language.
+
+Cristina Matonte
+https://github.com/anitsirc
+
+Mikel Lindsaar
+https://github.com/mikel
+
 Syntax
 ------
 
@@ -170,3 +181,6 @@ Contributing
 ------------
 
 Fork on GitHub and after you've committed tested patches, send a pull request.
+
+
+
