@@ -126,6 +126,14 @@ describe Kalc::Interpreter do
     it { expect(evaluate('ROUND(233.256,-2)')).to eq(200) }
   end
 
+  # https://github.com/mrcsparker/kalc/issues/9
+  # https://github.com/kschiess/parslet/issues/126
+  context 'empty strings' do
+    it { expect(evaluate('""')).to eq('') }
+    it { expect(evaluate('var1 := 1; var2 := 2; IF(var1=var2,"","ERROR")')).to eq('ERROR') }
+    it { expect(evaluate('var1 := 1; var2 := 1; IF(var1=var2,"","ERROR")')).to eq('') }
+  end
+
   private
   def evaluate(expression)
     g = @grammar.parse(expression)
