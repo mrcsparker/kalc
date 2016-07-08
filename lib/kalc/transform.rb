@@ -45,6 +45,11 @@ module Kalc
       Ast::StringValue.new(string)
     }
 
+    rule(:string => sequence(:string)) {
+      string = '' if string == nil
+      Ast::StringValue.new(string)
+    }
+
     rule(:boolean => simple(:boolean)) {
       Ast::BooleanValue.new(boolean)
     }
