@@ -96,8 +96,12 @@ describe Kalc::Interpreter do
   context 'Min and Max Functions' do
     it { expect(evaluate('MAX(3, 1, 2)')).to eq(3) }
     it { expect(evaluate('MAX(-1, 2*4, (3-1)*2, 5, 6)')).to eq(8) }
+    it { expect(evaluate('MAX(0/0, 2)').to_s).to eq("NaN") }
+    it { expect(evaluate('MAX(1/0, 3)').to_s).to eq("Infinity") }
     it { expect(evaluate('MIN(3, 1, 2)')).to eq(1) }
     it { expect(evaluate('MIN(-1, 2*4, (3-1)*2, 5, 6)')).to eq(-1) }
+    it { expect(evaluate('MIN(0/0, 2)').to_s).to eq("NaN") }
+    it { expect(evaluate('MIN(-1/0, 3)').to_s).to eq("-Infinity") }
     context 'having variables' do
       it { expect(evaluate('var := 15; MAX(1, var, 10)')).to eq(15) }
       it { expect(evaluate('var := 15; MIN(1, var, -10)')).to eq(-10) }
@@ -109,10 +113,14 @@ describe Kalc::Interpreter do
     it { expect(evaluate('FLOOR(3.8)')).to eq(3) }
     it { expect(evaluate('FLOOR(-3.4)')).to eq(-4) }
     it { expect(evaluate('FLOOR(3)')).to eq(3) }
+    it { expect(evaluate('FLOOR(0/0)').to_s).to eq("NaN") }
+    it { expect(evaluate('FLOOR(1/0)').to_s).to eq("Infinity") }
     it { expect(evaluate('CEILING(3)')).to eq(3) }
     it { expect(evaluate('CEILING(3.8)')).to eq(4) }
     it { expect(evaluate('CEILING(3.8)')).to eq(4) }
     it { expect(evaluate('CEILING(-3.2)')).to eq(-3) }
+    it { expect(evaluate('CEILING(0/0)').to_s).to eq("NaN") }
+    it { expect(evaluate('CEILING(1/0)').to_s).to eq("Infinity") }
 
     context 'having variables' do
       it { expect(evaluate('var := 2.456; FLOOR(var)')).to eq(2) }
