@@ -44,7 +44,7 @@ describe Kalc::Interpreter do
     expect(evaluate("'a b' := 1; 'a b' + 1")).to eq(2)
   end
 
-  it { expect(evaluate('((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0))')).to eq(15000) }
+  it { expect(evaluate('((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0))')).to eq(15_000) }
 
   it { expect(evaluate('(((40.0)/1000*(4380.0)*(200.0))-((40.0)/1000*(4380.0)*((((75.0)*(25.0))+((125.0)*(25.0))+((150.0)*(25.0))+((250.0)*(25.0)))/(10.0)/(40.0)/(0.8))))*(0.05)')).to eq(1341.375) }
 
@@ -52,21 +52,21 @@ describe Kalc::Interpreter do
     it { expect(evaluate('-2')).to eq(-2) }
     it { expect(evaluate('-1000')).to eq(-1000) }
     it { expect(evaluate('-1000.0001')).to eq(-1000.0001) }
-    it { expect(evaluate('1 + -1')).to eq(0 )}
+    it { expect(evaluate('1 + -1')).to eq(0) }
     it { expect(evaluate('1 + -10')).to eq(-9) }
   end
 
   context 'Positive numbers' do
     it { expect(evaluate('1 + +1')).to eq(2) }
     it { expect(evaluate('1 + +1 - 1')).to eq(1) }
-    it { expect(evaluate('+10000.0001')).to eq(10000.0001) }
+    it { expect(evaluate('+10000.0001')).to eq(10_000.0001) }
   end
 
   context 'Boolean value' do
     it { expect(evaluate('TRUE')).to eq(true) }
     it { expect(evaluate('FALSE')).to eq(false) }
     it { expect(evaluate('FALSE || TRUE')).to eq(true) }
-    it { expect(evaluate('FALSE && TRUE')).to  eq(false) }
+    it { expect(evaluate('FALSE && TRUE')).to eq(false) }
   end
 
   context 'Decimal numbers' do
@@ -84,7 +84,7 @@ describe Kalc::Interpreter do
   end
 
   context 'Exponents' do
-    it { expect(evaluate('1.23e+10')).to eq(12300000000.0) }
+    it { expect(evaluate('1.23e+10')).to eq(12_300_000_000.0) }
     it { expect(evaluate('1.23e-10')).to eq(1.23e-10) }
   end
 
@@ -96,12 +96,12 @@ describe Kalc::Interpreter do
   context 'Min and Max Functions' do
     it { expect(evaluate('MAX(3, 1, 2)')).to eq(3) }
     it { expect(evaluate('MAX(-1, 2*4, (3-1)*2, 5, 6)')).to eq(8) }
-    it { expect(evaluate('MAX(0/0, 2)').to_s).to eq("NaN") }
-    it { expect(evaluate('MAX(1/0, 3)').to_s).to eq("Infinity") }
+    it { expect(evaluate('MAX(0/0, 2)').to_s).to eq('NaN') }
+    it { expect(evaluate('MAX(1/0, 3)').to_s).to eq('Infinity') }
     it { expect(evaluate('MIN(3, 1, 2)')).to eq(1) }
     it { expect(evaluate('MIN(-1, 2*4, (3-1)*2, 5, 6)')).to eq(-1) }
-    it { expect(evaluate('MIN(0/0, 2)').to_s).to eq("NaN") }
-    it { expect(evaluate('MIN(-1/0, 3)').to_s).to eq("-Infinity") }
+    it { expect(evaluate('MIN(0/0, 2)').to_s).to eq('NaN') }
+    it { expect(evaluate('MIN(-1/0, 3)').to_s).to eq('-Infinity') }
     context 'having variables' do
       it { expect(evaluate('var := 15; MAX(1, var, 10)')).to eq(15) }
       it { expect(evaluate('var := 15; MIN(1, var, -10)')).to eq(-10) }
@@ -113,14 +113,14 @@ describe Kalc::Interpreter do
     it { expect(evaluate('FLOOR(3.8)')).to eq(3) }
     it { expect(evaluate('FLOOR(-3.4)')).to eq(-4) }
     it { expect(evaluate('FLOOR(3)')).to eq(3) }
-    it { expect(evaluate('FLOOR(0/0)').to_s).to eq("NaN") }
-    it { expect(evaluate('FLOOR(1/0)').to_s).to eq("Infinity") }
+    it { expect(evaluate('FLOOR(0/0)').to_s).to eq('NaN') }
+    it { expect(evaluate('FLOOR(1/0)').to_s).to eq('Infinity') }
     it { expect(evaluate('CEILING(3)')).to eq(3) }
     it { expect(evaluate('CEILING(3.8)')).to eq(4) }
     it { expect(evaluate('CEILING(3.8)')).to eq(4) }
     it { expect(evaluate('CEILING(-3.2)')).to eq(-3) }
-    it { expect(evaluate('CEILING(0/0)').to_s).to eq("NaN") }
-    it { expect(evaluate('CEILING(1/0)').to_s).to eq("Infinity") }
+    it { expect(evaluate('CEILING(0/0)').to_s).to eq('NaN') }
+    it { expect(evaluate('CEILING(1/0)').to_s).to eq('Infinity') }
 
     context 'having variables' do
       it { expect(evaluate('var := 2.456; FLOOR(var)')).to eq(2) }
@@ -143,6 +143,7 @@ describe Kalc::Interpreter do
   end
 
   private
+
   def evaluate(expression)
     g = @grammar.parse(expression)
     ast = @transform.apply(g)

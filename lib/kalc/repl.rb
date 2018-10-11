@@ -18,27 +18,26 @@ module Kalc
       puts 'You are ready to go.  Have fun!'
       puts ''
 
-      function_list = %w(quit exit functions variables ast) + @kalc.interpreter.env.functions.map { |f| f.first }
+      function_list = %w[quit exit functions variables ast] + @kalc.interpreter.env.functions.map(&:first)
 
       begin
         comp = proc { |s| function_list.grep(/^#{Regexp.escape(s)}/) }
         Readline.completion_append_character = ''
         Readline.completion_proc = comp
 
-        while input = Readline.readline("kalc-#{Kalc::VERSION} > ", true)
+        while (input = Readline.readline("kalc-#{Kalc::VERSION} > ", true))
           begin
-            case
-            when (input == 'quit' || input == 'exit')
+            if input == 'quit' || input == 'exit'
               break
-            when input == 'functions'
-              puts @kalc.interpreter.env.functions.map { |f| f.first }.join(', ')
-            when input == 'variables'
+            elsif input == 'functions'
+              puts @kalc.interpreter.env.functions.map(&:first).join(', ')
+            elsif input == 'variables'
               puts @kalc.interpreter.env.variables.map { |v| "#{v[0]} = #{v[1]}" }.join("\n\r")
-            when input == 'reload'
+            elsif input == 'reload'
               load_env
-            when input == 'ast'
+            elsif input == 'ast'
               pp @kalc.ast
-            when input != ''
+            elsif input != ''
               puts @kalc.run(input)
             end
           rescue Parslet::ParseFailed => e
@@ -55,12 +54,12 @@ module Kalc
     end
 
     def heading
-      %q{
+      '
         This is Kalc, a small line-based language.
         More information about Kalc can be found at https://github.com/mrcsparker/kalc.
 
         Kalc is free software, provided as is, with no warranty.
-      }
+      '
     end
   end
 end

@@ -11,31 +11,27 @@ module Kalc
     end
 
     def add_function(name, value)
-      @functions.update({ name.to_s.strip => value })
+      @functions.update(name.to_s.strip => value)
     end
 
     def get_function(name)
-      if fun = @functions[name.to_s.strip]
+      if (fun = @functions[name.to_s.strip])
         fun
       elsif !@parent.nil?
         @parent.get_function(name)
-      else
-        nil
       end
     end
 
     def add_variable(name, value)
-      @variables.update({ name.to_s.strip => value })
+      @variables.update(name.to_s.strip => value)
       value
     end
 
     def get_variable(name)
-      if var = @variables[name.to_s.strip]
+      if (var = @variables[name.to_s.strip])
         var
       elsif !@parent.nil?
         @parent.get_variable(name)
-      else
-        nil
       end
     end
   end

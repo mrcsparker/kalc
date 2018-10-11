@@ -8,7 +8,6 @@ module Kalc
 
     def initialize
       @env = Environment.new do |env|
-
         env.add_function(:IF, lambda { |cxt, cond, if_true, if_false|
           cond.eval(cxt) ? if_true.eval(cxt) : if_false.eval(cxt)
         })
@@ -43,7 +42,7 @@ module Kalc
           rand(val.eval(cxt))
         })
 
-        env.add_function(:SYSTEM, lambda { |cxt, val|
+        env.add_function(:SYSTEM, lambda { |_cxt, _val|
           throw "Nope.  I don't think so!"
         })
 
@@ -100,18 +99,20 @@ module Kalc
 
         env.add_function(:MAX, lambda { |cxt, first, *args|
           evaluated_args = (args << first).map { |a| a.eval(cxt) }
-          return BigDecimal.new("NaN") if evaluated_args.any? { |a| a.is_a?(BigDecimal) && a.nan? }
+          return BigDecimal('NaN') if evaluated_args.any? { |a| a.is_a?(BigDecimal) && a.nan? }
+
           evaluated_args.max
         })
 
         env.add_function(:MIN, lambda { |cxt, first, *args|
           evaluated_args = (args << first).map { |a| a.eval(cxt) }
-          return BigDecimal.new("NaN") if evaluated_args.any? { |a| a.is_a?(BigDecimal) && a.nan? }
+          return BigDecimal('NaN') if evaluated_args.any? { |a| a.is_a?(BigDecimal) && a.nan? }
+
           evaluated_args.min
         })
 
         math_funs =
-            %w(acos acosh asin asinh atan atanh cbrt cos cosh erf erfc exp gamma lgamma log log2 log10 sin sinh sqrt tan tanh)
+          %w[acos acosh asin asinh atan atanh cbrt cos cosh erf erfc exp gamma lgamma log log2 log10 sin sinh sqrt tan tanh]
 
         math_funs.each do |math_fun|
           env.add_function(math_fun.upcase.to_sym, lambda { |cxt, val|
@@ -121,12 +122,12 @@ module Kalc
 
         # Strings
         string_funs =
-            %w(chomp chop chr clear count
-               downcase
-               hex
-               inspect intern
-               to_sym length size lstrip succ next oct ord reverse rstrip strip
-               swapcase to_c to_f to_i to_r upcase)
+          %w[chomp chop chr clear count
+             downcase
+             hex
+             inspect intern
+             to_sym length size lstrip succ next oct ord reverse rstrip strip
+             swapcase to_c to_f to_i to_r upcase]
 
         string_funs.each do |str_fun|
           env.add_function(str_fun.upcase.to_sym, lambda { |cxt, val|
@@ -151,7 +152,7 @@ module Kalc
         })
 
         env.add_function(:DOLLAR, lambda { |cxt, val, decimal_places|
-          "%.#{Integer(decimal_places.eval(cxt))}f" % BigDecimal.new(val.eval(cxt))
+          format("%.#{Integer(decimal_places.eval(cxt))}f", BigDecimal(val.eval(cxt)))
         })
 
         env.add_function(:EXACT, lambda { |cxt, string1, string2|
@@ -164,8 +165,8 @@ module Kalc
         })
 
         env.add_function(:FIXED, lambda { |cxt, val, decimal_places, no_commas|
-          output = "%.#{Integer(decimal_places.eval(cxt))}f" % BigDecimal.new(val.eval(cxt))
-          output = output.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse if !no_commas.eval(cxt)
+          output = format("%.#{Integer(decimal_places.eval(cxt))}f", BigDecimal(val.eval(cxt)))
+          output = output.to_s.reverse.scan(/(?:\d*\.)?\d{1,3}-?/).join(',').reverse unless no_commas.eval(cxt)
           output
         })
 
@@ -183,7 +184,6 @@ module Kalc
         })
 
         env.add_function(:MID, lambda { |cxt, val, start_position, number_of_characters|
-
           start = Integer(start_position.eval(cxt)) - 1
           chars = Integer(number_of_characters.eval(cxt)) - 1
 
@@ -191,7 +191,7 @@ module Kalc
         })
 
         env.add_function(:PROPER, lambda { |cxt, val|
-          val.eval(cxt).split(' ').map { |c| c.capitalize }.join(' ')
+          val.eval(cxt).split(' ').map(&:capitalize).join(' ')
         })
 
         env.add_function(:REPLACE, lambda { |cxt, val, start_position, number_of_chars, new_text|
@@ -246,11 +246,11 @@ module Kalc
         })
 
         # Debug
-        env.add_function(:P, lambda { |cxt, *output|
+        env.add_function(:P, lambda { |_cxt, *output|
           p output
         })
 
-        env.add_function(:PP, lambda { |cxt, *output|
+        env.add_function(:PP, lambda { |_cxt, *output|
           pp output
         })
 
@@ -261,15 +261,16 @@ module Kalc
         env.add_function(:FLOOR, lambda { |cxt, val|
           value = val.eval(cxt)
           return value if value.is_a?(BigDecimal) && (value.nan? || value.infinite?)
+
           value.floor
         })
 
         env.add_function(:CEILING, lambda { |cxt, val|
           value = val.eval(cxt)
           return value if value.is_a?(BigDecimal) && (value.nan? || value.infinite?)
+
           value.ceil
         })
-
       end
     end
 

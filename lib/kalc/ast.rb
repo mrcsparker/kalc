@@ -40,11 +40,9 @@ module Kalc
       end
 
       def eval(context)
-        begin
-          -(@value.eval(context))
-        rescue
-          @value.eval(context)
-        end
+        -@value.eval(context)
+      rescue StandardError
+        @value.eval(context)
       end
     end
 
@@ -57,11 +55,9 @@ module Kalc
       end
 
       def eval(context)
-        begin
-          +(@value.eval(context))
-        rescue
-          @value.eval(context)
-        end
+        +@value.eval(context)
+      rescue StandardError
+        @value.eval(context)
       end
     end
 
@@ -72,8 +68,8 @@ module Kalc
         @value = value
       end
 
-      def eval(context)
-        @value == 'TRUE' ? true : false
+      def eval(_context)
+        @value == 'TRUE'
       end
     end
 
@@ -81,11 +77,11 @@ module Kalc
       attr_reader :value
 
       def initialize(value)
-        @value = BigDecimal.new(value.to_s)
+        @value = BigDecimal(value.to_s)
       end
 
-      def eval(context)
-        BigDecimal.new(@value)
+      def eval(_context)
+        BigDecimal(@value)
       end
     end
 
@@ -123,10 +119,10 @@ module Kalc
       end
 
       def eval(context)
-        @ops.inject(@left.eval(context)) { |x, op|
+        @ops.inject(@left.eval(context)) do |x, op|
           a = Arithmetic.new(x, op[:right].eval(context), op[:operator])
           a.eval(context)
-        }
+        end
       end
     end
 
@@ -141,7 +137,7 @@ module Kalc
         @operator = operator
       end
 
-      def eval(context)
+      def eval(_context)
         case @operator.to_s.strip
         when '&&'
           @left && @right
@@ -218,7 +214,8 @@ module Kalc
 
       def eval(context)
         var = context.get_variable(@variable)
-        fail "Invalid variable: #{@variable}" unless var
+        raise "Invalid variable: #{@variable}" unless var
+
         var.class == BigDecimal ? var : var.eval(context)
       end
     end
@@ -230,7 +227,7 @@ module Kalc
         @value = value
       end
 
-      def eval(context)
+      def eval(_context)
         value.to_s
       end
     end
@@ -246,11 +243,12 @@ module Kalc
 
       def eval(context)
         to_call = context.get_function(@name)
-        fail "Unknown function #{@name}" unless to_call
+        raise "Unknown function #{@name}" unless to_call
+
         to_call.call(context, *@variable_list)
       rescue ArgumentError
-        fail "Argument Error. Function #{@name} was called with #{@variable_list.count} parameters. " +
-          "It needs at least #{to_call.parameters.select{|a| a.first == :req}.count - 1 } parameters"
+        raise "Argument Error. Function #{@name} was called with #{@variable_list.count} parameters. " \
+             "It needs at least #{to_call.parameters.select { |a| a.first == :req }.count - 1} parameters"
       end
     end
 

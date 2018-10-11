@@ -1,11 +1,9 @@
 require 'spec_helper'
 
 class Kalc::Stdlib
-
 end
 
 describe Kalc::Stdlib do
-
   before(:each) do
     @grammar = Kalc::Grammar.new
     @transform = Kalc::Transform.new
@@ -51,6 +49,7 @@ describe Kalc::Stdlib do
   end
 
   private
+
   def evaluate(expression)
     r = Kalc::Runner.new
     r.run(expression)

@@ -5,7 +5,7 @@ describe Kalc::Grammar do
 
   context 'integers' do
     1.upto(10) do |i|
-      it { expect(grammar).to parse("#{i}") }
+      it { expect(grammar).to parse(i.to_s) }
     end
   end
 
