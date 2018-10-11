@@ -99,11 +99,15 @@ module Kalc
         })
 
         env.add_function(:MAX, lambda { |cxt, first, *args|
-          (args<<first).map { |a| a.eval(cxt) }.max
+          evaluated_args = (args << first).map { |a| a.eval(cxt) }
+          return BigDecimal.new("NaN") if evaluated_args.any? { |a| a.is_a?(BigDecimal) && a.nan? }
+          evaluated_args.max
         })
 
         env.add_function(:MIN, lambda { |cxt, first, *args|
-          (args<<first).map { |a| a.eval(cxt) }.min
+          evaluated_args = (args << first).map { |a| a.eval(cxt) }
+          return BigDecimal.new("NaN") if evaluated_args.any? { |a| a.is_a?(BigDecimal) && a.nan? }
+          evaluated_args.min
         })
 
         math_funs =
@@ -255,11 +259,15 @@ module Kalc
         })
 
         env.add_function(:FLOOR, lambda { |cxt, val|
-          val.eval(cxt).floor
+          value = val.eval(cxt)
+          return value if value.is_a?(BigDecimal) && (value.nan? || value.infinite?)
+          value.floor
         })
 
         env.add_function(:CEILING, lambda { |cxt, val|
-          val.eval(cxt).ceil
+          value = val.eval(cxt)
+          return value if value.is_a?(BigDecimal) && (value.nan? || value.infinite?)
+          value.ceil
         })
 
       end
