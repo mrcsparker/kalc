@@ -9,8 +9,6 @@ Gem::Specification.new do |s|
   s.summary = 'Small calculation language.'
   s.description = "Calculation language slightly based on Excel's formula language."
 
-  s.rubyforge_project = 'kalc'
-
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
