@@ -287,6 +287,30 @@ describe Kalc::Interpreter do
     end
   end
 
+  context 'Regular expression functions' do
+    it 'matches strings with user-provided patterns' do
+      result = evaluate('REGEXP_MATCH("abc123", "\\d+")')
+
+      expect(result).to be_a(MatchData)
+      expect(result[0]).to eq('123')
+    end
+
+    it 'replaces text with user-provided patterns' do
+      expect(evaluate('REGEXP_REPLACE("abc123", "\\d+", "x")')).to eq('abcx')
+    end
+
+    it 'limits catastrophic regular expressions' do
+      allow(Kalc::Builtins::Regex).to receive(:regexp_timeout).and_return(0.0001)
+
+      expect do
+        Kalc::Builtins::Regex.with_safe_regexp('(a+)+\z') do |regexp|
+          regexp.match("#{'a' * 5000}!")
+        end
+      end
+        .to raise_error(ArgumentError, /time limit/)
+    end
+  end
+
   # https://github.com/mrcsparker/kalc/issues/9
   context 'empty strings' do
     it { expect(evaluate('""')).to eq('') }

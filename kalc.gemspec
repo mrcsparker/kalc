@@ -1,5 +1,46 @@
 $LOAD_PATH.push File.expand_path('lib', __dir__)
 require 'kalc/version'
+
+root_files = %w[
+  .gitignore
+  .rspec
+  .rubocop.yml
+  .ruby-version
+  .tool-versions
+  CHANGELOG.md
+  CONTRIBUTING.md
+  Gemfile
+  Gemfile.lock
+  LICENSE
+  README.md
+  Rakefile
+  kalc.gemspec
+].freeze
+
+package_globs = %w[
+  .github/workflows/*.yml
+  bin/*
+  examples/*.kalc
+  lib/**/*.kalc
+  lib/**/*.rb
+  spec/**/*_spec.rb
+  spec/spec_helper.rb
+].freeze
+
+files = Dir.chdir(__dir__) do
+  (root_files + package_globs.flat_map { |glob| Dir.glob(glob) })
+    .select { |path| File.file?(path) }
+    .sort
+    .uniq
+end
+
+executables = Dir.chdir(__dir__) do
+  Dir.glob('bin/*')
+     .select { |path| File.file?(path) }
+     .map { |path| File.basename(path) }
+     .sort
+end
+
 Gem::Specification.new do |s|
   s.name = 'kalc'
   s.version = Kalc::VERSION
@@ -18,8 +59,8 @@ Gem::Specification.new do |s|
     'rubygems_mfa_required' => 'true'
   }
 
-  s.files = `git ls-files`.split("\n")
-  s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.files = files
+  s.executables = executables
   s.require_paths = %w[lib]
 
   s.add_dependency 'bigdecimal'
