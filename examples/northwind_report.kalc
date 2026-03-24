@@ -1,0 +1,13 @@
+regions := ["north"; "south"; "north"; "west"; "north"; "east"]
+revenue := [1200; 900; 1800; 500; 1600; 700]
+tickets := [12; 8; 17; 4; 15; 7]
+
+CONCATENATE(
+  "North closed ",
+  COUNTIF(regions, "north"),
+  " deals for ",
+  FIXED(SUMIF(regions, "north", revenue), 0, TRUE),
+  " revenue and ",
+  FIXED(SUMIF(regions, "north", tickets), 0, TRUE),
+  " tickets."
+)

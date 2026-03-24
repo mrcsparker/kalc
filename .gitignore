@@ -1,0 +1,11 @@
+.bundle/
+.DS_Store
+.ruby-lsp/
+.rspec_status
+.idea/
+.vscode/
+coverage/
+pkg/
+tmp/
+vendor/bundle/
+*.gem

@@ -1,186 +1,374 @@
-kalc
-====
+# kalc
 
-kalc is a small functional programming language that (gasp) borrows a lot of its
-syntax from the Excel formula language.
+`kalc` is a small Excel-flavored, expression-based language implemented in
+Ruby. It borrows the feel of spreadsheet formulas, but runs as plain text:
+you can store formulas in files, run them from the command line, experiment in
+a REPL, or embed the runtime in a Ruby application.
 
-ikalc
------
+The language leans into spreadsheet-style behavior:
 
-kalc comes with its own repl, known as `ikalc`. Start it up in your console by
-typing in `ikalc`
+- variables are lazy formulas, not eager assignments
+- builtins are modeled after familiar Excel functions
+- arrays are rectangular values with row and column operations
+- user-defined functions and recursion let you go beyond spreadsheet cells
 
-The Awesomest Contributors in the World!
-----------------------------------------
+`kalc` is not a spreadsheet UI. There are no `A1:B10` references today; arrays
+are the current collection model.
 
-These people have made kalc a much more awesome language.
+## Highlights
 
-Cristina Matonte
-https://github.com/anitsirc
+- Excel-like expressions with `IF`, `IFS`, `SWITCH`, `CHOOSE`, `SUM`, `ROUND`,
+  `TEXTJOIN`, `SUBSTITUTE`, `MATCH`, `XLOOKUP`, `FILTER`, `SORT`, `UNIQUE`,
+  `SEQUENCE`, and more
+- lazy assignment semantics that behave more like spreadsheet formulas than
+  local variables
+- first-class array literals such as `[1; 2; 3]` and
+  `["name", "score"; "Ada", 98]`
+- custom parser and embeddable Ruby runtime
+- command-line runner, interactive REPL, and Ruby API
+- example programs under [`examples/`](examples/)
+  backed by executable specs in
+  [`spec/examples_spec.rb`](spec/examples_spec.rb)
 
-Mikel Lindsaar
-https://github.com/mikel
+## Quick Start
 
-Syntax
-------
+From a source checkout:
 
-kalc is a tiny language, and it has very little syntax. It supports
-functions, variable assignment, arithmetic, and some string parsing
-functionality.
+```bash
+mise install
+bin/setup
+ruby bin/kalc examples/invoice.kalc
+ruby bin/ikalc
+```
 
-Numbers
--------
+Example output:
 
-All numbers are BigDecimal ruby class numbers for precision.
+```text
+Ada Lovelace owes 102.98 (subtotal 98.00, discount 9.80, shipping 7.50, tax 7.28)
+```
 
-    1 => 1.0
-    2.020 => 2.02
-    1.23E => 12300000000.0
+If you want debug output in the REPL, start it with:
 
-Arithmetic
-----------
+```bash
+KALC_DEBUG=1 ruby bin/ikalc
+```
 
-    1 + 1 / (10 * 100) - 3 + 3 - (3 - 2)
-    SUM(1, 2, 3, 4, 5)
+## Command Line
 
-Arithmetic is standard infix with nesting via parenthesis.
+Run a `.kalc` file:
 
-Logical operations
-------------------
+```bash
+ruby bin/kalc examples/spaceport_dashboard.kalc
+```
 
-    2 < 1 ? 1 : 3 # Ternary
-    (1 || 2) # 1.0
-    2 or 3 # 2.0
-    OR(1 > 2, 3 < 2, 8 == 8) # true
+Start the interactive shell:
 
-Variable assignment
--------------------
+```bash
+ruby bin/ikalc
+```
 
-The assignment operator `:=` is borrowed from Pascal.  This decision was
-made for practical reason.  Since comparison operators are both `=` and
-`==` and the language is expression-based, `=` could not be chosen.
+The REPL supports a few built-in commands:
 
-Variables come in a lot of different flavors.
+- `functions` prints registered functions
+- `variables` prints currently defined variables
+- `ast` prints the last parsed AST
+- `reload` rebuilds the runtime and reloads the stdlib
+- `quit` and `exit` leave the REPL
 
-You have standard variables:
+## Language Overview
 
-    a := 1 b := 2 d := a + b
+### Numbers, Strings, and Booleans
 
-    d := 100.0
+`kalc` prefers `BigDecimal` for decimal arithmetic, while some math-library
+functions return other Ruby numerics where that makes sense.
 
-and you have quoted variables:
+```kalc
+1
+2.020
+TRUE
+FALSE
+"hello"
+```
 
-    'a' := 1 'b' := 2 'd' := 'a' + 'b'
+### Arithmetic and Conditionals
 
-Quoted variables can contain pretty much any character that you can
-think of:
+Arithmetic uses standard infix operators and parentheses.
 
-    'Hello world' := 1
-    'Hello 2 the world' := 1
-    'This \' is a \' [string]' := 1
-    '!@#$%^& !@#$%^& *&^%$%^&*' := 1
+```kalc
+1 + 1 / (10 * 100) - 3 + 3 - (3 - 2)
+SUM(1, 2, 3, 4, 5)
+ROUND(19.99 * 1.0825, 2)
+```
 
-The only real rule is that you need to escape a standard single quote.
+Conditionals can be written with the ternary operator or Excel-style builtins.
 
-Functions
----------
+```kalc
+1 > 2 ? "no" : "yes"
+IF(2 < 3, "ok", "nope")
+IFS(1 > 2, "no", 2 > 1, "yes")
+SWITCH(2, 1, "one", 2, "two", "other")
+CHOOSE(2, "alpha", "beta", "gamma")
+```
 
-You can create functions in kalc:
+Infix logical operators short-circuit:
 
-    DEFINE FOO(a, b) { a + b }
+```kalc
+FALSE && SYSTEM("echo nope")
+TRUE || SYSTEM("echo nope")
+```
 
-You can also call functions in kalc:
+`SYSTEM` is intentionally disabled, so short-circuiting matters.
 
-    \> a = FOO(2, 3) \> a 5
+### Lazy Variables
 
-There are a few examples of functions in `lib/stdlib.kalc`
+Assignments use `:=`. Variables store formulas and are re-evaluated when read,
+which gives `kalc` a spreadsheet-like feel.
 
-Built-in functions
-------------------
+```kalc
+price := 10
+line_total := price * 2
+price := 20
+line_total
+```
 
-There are some built-in functions (in `lib/kalc/interpreter.rb`). They are based
-on the Excel formula functions, so you should see some overlap.
+That evaluates to `40`, not `20`, because `line_total` tracks the formula
+`price * 2`.
 
-Some of them are:
+Circular references are rejected:
 
-    # Conditional
-    IF, OR, NOT, AND
+```kalc
+a := a + 1
+```
 
-    # Random number generation
-    RAND
+### Quoted Identifiers
 
-    # System level integration
-    SYSTEM
+Quoted identifiers are useful when a variable name needs spaces, punctuation,
+or other characters that normal identifiers do not allow.
 
-    # Boolean functions
-    ISLOGICAL, ISNONTEXT, ISNUMBER, ISTEXT
+```kalc
+'Invoice Total' := 98
+'Tax Rate (%)' := 8.25
+'This \' is valid' := 1
+```
 
-    # Math functions
-    ABS, DEGREES, PRODUCT, RADIANS, ROUND, SUM, TRUNC, LN, ACOS,
-    ACOSH, ASIN, ASINH, ATAN, ATANH, CBRT, COS, COSH, ERF, ERFC, EXP, GAMMA,
-    LGAMMA, LOG, LOG2, LOG10, SIN, SINH, SQRT, TAN, TANH, MIN, MAX, FLOOR, CEILING
+### Arrays
 
-    # String functions
-    CHOMP, CHOP, CHR, CLEAR, COUNT, DOWNCASE, HEX, INSPECT, INTERN, TO_SYM, LENGTH, SIZE,
-    LSTRIP, SUCC, NEXT, OCT, ORD, REVERSE, RSTRIP, STRIP, SWAPCASE, TO_C,
-    TO_F, TO_I, TO_R, UPCASE, CHAR, CLEAN, CODE, CONCATENATE, DOLLAR, EXACT,
-    FIND, FIXED, LEFT, LEN, LOWER, MID, PROPER, REPLACE, REPT, RIGHT,
-    SEARCH, SUBSTITUTE, TRIM, UPPER, VALUE
+Arrays use square brackets. Commas separate columns and semicolons separate
+rows.
 
-    # Regular expression functions
-    REGEXP_MATCH, REGEXP_REPLACE
+```kalc
+[1; 2; 3]
+[1, 2, 3]
+["name", "score"; "Ada", 98; "Grace", 100]
+```
 
-    # Debugging
-    P, PP, PUTS,
+Arrays work with aggregate and lookup functions:
 
-    # Other
-    PLUS_ONE, MINUS_ONE, SQUARE, CUBE, FIB, FACTORIAL,
-    TOWERS_OF_HANOI
+```kalc
+scores := [98; 100; 99]
+AVERAGE(scores)
+INDEX(scores, 2)
+XLOOKUP("Grace", ["Ada"; "Grace"; "Katherine"], scores)
+FILTER([10; 20; 30], [FALSE; TRUE; TRUE])
+```
 
-FLOOR and CEILING functions acts as the mathematical definition of floor and ceil, meaning that it has a fixed significance value of 1.
+The current array and table-oriented builtins include:
 
-Loops
------
+- `ROWS`, `COLUMNS`, `INDEX`
+- `MATCH`, `XLOOKUP`
+- `FILTER`, `SORT`, `UNIQUE`, `TRANSPOSE`, `SEQUENCE`
 
-There are no looping mechanisms to speak of, but recursion works (pretty) well.
-**Note:** *go too deep and you might blow the stack!*
+### User-Defined Functions
 
-    DEFINE SAMPLE_LOOP(a) {
-      PUTS(a)
-      IF(a == 1, 1, SAMPLE_LOOP(a - 1))
-    }
+You can define functions directly in `kalc`:
 
-There are a few examples of loops via recursion in `lib/stdlib.kalc`
+```kalc
+DEFINE DOUBLE(x) {
+  x * 2
+}
 
-Weirdness
----------
+DOUBLE(21)
+```
 
-And here is where it gets a bit weird. It has to look a bit like Excel, so you
-can expect things to look odd in places.
+Recursion works too:
 
-For example, here is how you compare 2 variables:
+```kalc
+DEFINE FACT(n) {
+  IF(n <= 1, 1, n * FACT(n - 1))
+}
 
-    # Assign '1' to 'a' and '2' to 'b' a := 1 b := 2
+FACT(5)
+```
 
-    # Does 'a' equal 'b'? a = b \> false
+There is no dedicated loop syntax today, so recursion is the main way to
+express repeated work inside the language.
 
-    # Also, you can do this: a == b \> false
+## Builtins
 
-    (a == a) && (b = b) \> true
+Builtins live under
+[`lib/kalc/builtins/`](lib/kalc/builtins/).
+Some representative groups:
 
-`=` and `==` are both equality operators. Use `:=` for assignment.
+- Control flow: `IF`, `IFS`, `SWITCH`, `CHOOSE`, `AND`, `OR`, `NOT`
+- Math and aggregates: `SUM`, `AVERAGE`, `COUNT`, `COUNTA`, `MIN`, `MAX`,
+  `ABS`, `ROUND`, `ROUNDUP`, `ROUNDDOWN`, `INT`, `MOD`, `POWER`, `PI`,
+  `SUMIF`, `COUNTIF`
+- Strings: `CONCATENATE`, `TEXTJOIN`, `FIND`, `SEARCH`, `SUBSTITUTE`, `LEFT`,
+  `RIGHT`, `MID`, `REPLACE`, `TRIM`, `LOWER`, `UPPER`, `VALUE`, `FIXED`,
+  `DOLLAR`
+- Arrays and lookups: `ROWS`, `COLUMNS`, `INDEX`, `MATCH`, `XLOOKUP`,
+  `FILTER`, `SORT`, `UNIQUE`, `TRANSPOSE`, `SEQUENCE`
+- Regex: `REGEXP_MATCH`, `REGEXP_REPLACE`
+- Debugging: `P`, `PP`, `PUTS`
 
-More inside
------------
+The stdlib in
+[`lib/kalc/stdlib.kalc`](lib/kalc/stdlib.kalc)
+adds a few fun helpers like `FIB`, `FACTORIAL`, and `TOWERS_OF_HANOI`.
 
-Not everything is documented yet. As you can see, it is a mix of a lot of
-different ideas. The goal is to have an excel-like language that is somewhat
-functional.
+## Ruby API
 
-Contributing
-------------
+### High-Level API: `Kalc::Runner`
 
-Fork on GitHub and after you've committed tested patches, send a pull request.
+[`Kalc::Runner`](lib/kalc.rb) is the
+easiest way to embed `kalc`. It keeps the parser, interpreter, and environment
+alive across calls, so state persists naturally.
 
+```ruby
+require "kalc"
 
+runner = Kalc::Runner.new
+runner.run("tax := 0.0825")
+runner.run("price := 19.99")
 
+result = runner.run("ROUND(price * (1 + tax), 2)")
+result.class
+# => BigDecimal
+
+result.to_s("F")
+# => "21.64"
+```
+
+You can reset the runtime with `reload`:
+
+```ruby
+runner.reload
+```
+
+### Parsing Without Running
+
+Use [`Kalc::Grammar`](lib/kalc/grammar.rb)
+if you want the AST without evaluating it.
+
+```ruby
+require "kalc"
+
+grammar = Kalc::Grammar.new
+ast = grammar.parse("SUM([1; 2; 3])")
+
+ast.class
+# => Kalc::Ast::Program
+```
+
+Parse failures raise
+[`Kalc::ParseError`](lib/kalc/grammar/parse_error.rb),
+which includes line and column information.
+
+### Lower-Level Runtime Control
+
+Use [`Kalc::Interpreter`](lib/kalc/interpreter.rb)
+if you want to manage parsing and evaluation separately.
+
+```ruby
+require "kalc"
+
+grammar = Kalc::Grammar.new
+interpreter = Kalc::Interpreter.new
+interpreter.load_stdlib(grammar)
+
+ast = grammar.parse('XLOOKUP("Grace", ["Ada"; "Grace"], [98; 100])')
+result = interpreter.run(ast)
+
+result.to_s("F")
+# => "100.0"
+```
+
+### Error Handling
+
+```ruby
+require "kalc"
+
+runner = Kalc::Runner.new
+
+begin
+  runner.run("a := a + 1")
+rescue Kalc::CircularReferenceError, Kalc::ParseError => error
+  warn error.message
+end
+```
+
+Common runtime result types include:
+
+- `BigDecimal` for most decimal arithmetic
+- `String` for text results
+- `TrueClass` and `FalseClass` for booleans
+- [`Kalc::Ast::ArrayValue`](lib/kalc/ast.rb)
+  for array results
+
+`ArrayValue` exposes useful methods such as `rows`, `row_count`,
+`column_count`, `vector?`, and `to_s`.
+
+## Example Gallery
+
+The repository includes a playful set of examples under
+[`examples/`](examples/).
+Every file is covered by
+[`spec/examples_spec.rb`](spec/examples_spec.rb).
+
+Some good starting points:
+
+- [`examples/add.kalc`](examples/add.kalc)
+  - tiny arithmetic starter
+- [`examples/invoice.kalc`](examples/invoice.kalc)
+  - lazy formulas, formatting, and totals
+- [`examples/gradebook.kalc`](examples/gradebook.kalc)
+  - conditionals and weighted scoring
+- [`examples/arrays.kalc`](examples/arrays.kalc)
+  - arrays, aggregation, and reporting
+- [`examples/crew_lookup.kalc`](examples/crew_lookup.kalc)
+  - `XLOOKUP` and table data
+- [`examples/leaderboard.kalc`](examples/leaderboard.kalc)
+  - sorting and ranking
+- [`examples/restock_queue.kalc`](examples/restock_queue.kalc)
+  - filtering and text assembly
+- [`examples/sequence_board.kalc`](examples/sequence_board.kalc)
+  - generated arrays via `SEQUENCE`
+- [`examples/transpose_schedule.kalc`](examples/transpose_schedule.kalc)
+  - matrix transposition
+- [`examples/unique_topics.kalc`](examples/unique_topics.kalc)
+  - `UNIQUE` and text reporting
+- [`examples/spaceport_dashboard.kalc`](examples/spaceport_dashboard.kalc)
+  - a larger showcase with lookups and summaries
+
+## Development
+
+`kalc` uses `mise` to manage the Ruby version declared in
+[`.ruby-version`](.ruby-version) and
+[`.tool-versions`](.tool-versions).
+
+```bash
+mise install
+bin/setup
+bundle exec rake spec
+bundle exec rubocop
+```
+
+Useful development entry points:
+
+- `bin/console` opens an IRB session with a ready-to-use `runner`
+- `bin/ikalc` starts the interactive shell
+- `bundle exec rspec spec/examples_spec.rb` runs the example gallery checks
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md)
+for workflow details.

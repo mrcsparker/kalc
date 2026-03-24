@@ -1,0 +1,18 @@
+crew_names := ["Ada"; "Grace"; "Katherine"; "Dorothy"]
+crew_manifest := [
+  "captain", 98, "navigation";
+  "scientist", 100, "math";
+  "pilot", 99, "orbital";
+  "engineer", 97, "systems"
+]
+
+record := XLOOKUP("Grace", crew_names, crew_manifest)
+
+CONCATENATE(
+  "Crew record: role=",
+  PROPER(INDEX(record, 1, 1)),
+  ", score=",
+  FIXED(INDEX(record, 1, 2), 0, TRUE),
+  ", specialty=",
+  PROPER(INDEX(record, 1, 3))
+)

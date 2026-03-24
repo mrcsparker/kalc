@@ -117,4 +117,40 @@ describe Kalc::Grammar do
     it { expect(grammar).to parse('MIN(-1, 2*4, (3-1)*2, 5, 6)') }
     it { expect(grammar).to parse('MIN(1, -var, 10)') }
   end
+
+  context 'Quoted identifiers and strings' do
+    it { expect(grammar).to parse("'Hello world' := 1; 'Hello world' + 2") }
+    it { expect(grammar).to parse('IF(TRUE, "", "ERROR")') }
+  end
+
+  context 'Array literals' do
+    it { expect(grammar).to parse('[1; 2; 3]') }
+    it { expect(grammar).to parse('[1, 2, 3]') }
+    it { expect(grammar).to parse('["name", "score"; "Ada", 98]') }
+
+    it do
+      expect(grammar).to parse(<<~KALC)
+        [
+          "name", "score";
+          "Ada", 98;
+          "Grace", 100
+        ]
+      KALC
+    end
+
+    it { expect(grammar).not_to parse('[1, 2; 3]') }
+  end
+
+  context 'Function definitions' do
+    it do
+      expect(grammar).to parse(<<~KALC)
+        DEFINE ADD(x, y) {
+          x +
+          y
+        }
+
+        ADD(1, 2)
+      KALC
+    end
+  end
 end

@@ -1,0 +1,20 @@
+inventory := [
+  "coffee", 4, "warehouse a";
+  "tea", 12, "warehouse a";
+  "saffron", 2, "vault";
+  "cocoa", 18, "warehouse b";
+  "cardamom", 3, "vault"
+]
+
+queue := SORT(FILTER(inventory, [TRUE; FALSE; TRUE; FALSE; TRUE]), 2, 1)
+
+CONCATENATE(
+  "Restock route: ",
+  INDEX(queue, 1, 1),
+  " from ",
+  PROPER(INDEX(queue, 1, 3)),
+  ", then ",
+  INDEX(queue, 2, 1),
+  ", then ",
+  INDEX(queue, 3, 1)
+)

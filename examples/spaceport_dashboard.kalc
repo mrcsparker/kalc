@@ -1,0 +1,33 @@
+docks := [
+  "Aegis", 140, "active";
+  "Beacon", 95, "delayed";
+  "Cinder", 220, "active";
+  "Drift", 60, "maintenance";
+  "Echo", 185, "active";
+  "Flux", 40, "delayed"
+]
+
+shipments := [140; 95; 220; 60; 185; 40]
+statuses := ["active"; "delayed"; "active"; "maintenance"; "active"; "delayed"]
+
+active_docks := FILTER(docks, [TRUE; FALSE; TRUE; FALSE; TRUE; FALSE])
+sorted_active := SORT(active_docks, 2, -1)
+throughput := SUMIF(statuses, "active", shipments)
+upgrade_path := XLOOKUP(
+  throughput,
+  [0; 300; 500; 700],
+  ["local"; "regional"; "orbital"; "interstellar"],
+  "mythic",
+  -1
+)
+
+CONCATENATE(
+  "Active docks: ",
+  COUNTIF(statuses, "active"),
+  " / throughput: ",
+  FIXED(throughput, 0, TRUE),
+  " / top dock: ",
+  INDEX(sorted_active, 1, 1),
+  " / upgrade path: ",
+  PROPER(upgrade_path)
+)

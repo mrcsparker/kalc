@@ -1,0 +1,52 @@
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 3.2
+  Exclude:
+    - 'vendor/**/*'
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Style/RedundantStructKeywordInit:
+  Enabled: false

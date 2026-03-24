@@ -1,0 +1,11 @@
+sales := [125.50; 210.25; 199.75; 310.00]
+team := ["Ada", "Grace", "Katherine"]
+scoreboard := ["name", "score"; "Ada", 98; "Grace", 100; "Katherine", 99]
+
+CONCATENATE(
+  TEXTJOIN(", ", TRUE, team),
+  " closed ",
+  FIXED(SUM(sales), 2, TRUE),
+  " in sales. Top score: ",
+  FIXED(INDEX(scoreboard, 3, 2), 0, TRUE)
+)

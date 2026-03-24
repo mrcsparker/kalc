@@ -1,0 +1,18 @@
+players := [
+  "Ada", 98;
+  "Grace", 100;
+  "Katherine", 99;
+  "Annie", 97
+]
+
+sorted := SORT(players, 2, -1)
+podium := [INDEX(sorted, 1, 1); INDEX(sorted, 2, 1); INDEX(sorted, 3, 1)]
+
+CONCATENATE(
+  "Winner: ",
+  INDEX(sorted, 1, 1),
+  " with ",
+  FIXED(INDEX(sorted, 1, 2), 0, TRUE),
+  " / podium: ",
+  TEXTJOIN(", ", TRUE, podium)
+)

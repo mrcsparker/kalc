@@ -1,0 +1,9 @@
+raw_title := "kalc-build-2026-03-23"
+clean_title := REGEXP_REPLACE(raw_title, "[^A-Za-z0-9]+", " ")
+headline := PROPER(TRIM(clean_title))
+
+CONCATENATE(
+  headline,
+  " / characters=",
+  LEN(headline)
+)

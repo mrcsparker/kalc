@@ -1,0 +1,10 @@
+topics := ["ruby"; "excel"; "ruby"; "parser"; "excel"; "arrays"; "grammar"; "arrays"; "repl"]
+all_topics := SORT(UNIQUE(topics))
+rare_topics := SORT(UNIQUE(topics, FALSE, TRUE))
+
+CONCATENATE(
+  "All topics: ",
+  TEXTJOIN(", ", TRUE, all_topics),
+  " / mentioned once: ",
+  TEXTJOIN(", ", TRUE, rare_topics)
+)
