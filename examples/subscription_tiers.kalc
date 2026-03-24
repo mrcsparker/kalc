@@ -1,0 +1,17 @@
+plan_breakpoints := [0; 1000; 5000; 10000]
+plan_names := ["hobby"; "builder"; "scale"; "enterprise"]
+sla_names := ["community"; "two-day"; "same-day"; "dedicated"]
+monthly_events := 7200
+
+plan := XLOOKUP(monthly_events, plan_breakpoints, plan_names, "custom", -1)
+sla := XLOOKUP(monthly_events, plan_breakpoints, sla_names, "custom", -1)
+
+CONCATENATE(
+  "For ",
+  FIXED(monthly_events, 0, TRUE),
+  " events/month, choose the ",
+  PROPER(plan),
+  " plan with ",
+  sla,
+  " support."
+)

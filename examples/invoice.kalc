@@ -1,0 +1,35 @@
+DEFINE DISCOUNT_RATE(subtotal) {
+  IF(subtotal >= 100, 0.15, IF(subtotal >= 50, 0.10, 0.0))
+}
+
+DEFINE SHIPPING(subtotal) {
+  IF(subtotal >= 100, 0.0, 7.5)
+}
+
+'customer name' := "ada lovelace"
+'unit price' := 19.95
+'quantity' := 4
+'tax rate' := 0.0825
+
+subtotal := 'unit price' * 'quantity'
+discount := subtotal * DISCOUNT_RATE(subtotal)
+shipping := SHIPPING(subtotal)
+tax := (subtotal - discount) * 'tax rate'
+total := subtotal - discount + shipping + tax
+
+'unit price' := 24.5
+
+CONCATENATE(
+  PROPER('customer name'),
+  " owes ",
+  DOLLAR(total, 2),
+  " (subtotal ",
+  DOLLAR(subtotal, 2),
+  ", discount ",
+  DOLLAR(discount, 2),
+  ", shipping ",
+  DOLLAR(shipping, 2),
+  ", tax ",
+  DOLLAR(tax, 2),
+  ")"
+)

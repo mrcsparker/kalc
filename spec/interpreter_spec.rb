@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Kalc::Interpreter do
   before(:each) do
     @grammar = Kalc::Grammar.new
-    @transform = Kalc::Transform.new
   end
 
   it { expect(evaluate('2 + 2')).to eq(4) }
@@ -28,6 +27,7 @@ describe Kalc::Interpreter do
   it { expect(evaluate('ABS(-1 + -2)')).to eq(3) }
 
   it 'should be able to load variables' do
+    expect(evaluate('a := 1')).to eq(1)
     expect(evaluate('a := 1; 1 + a')).to eq(2)
     expect(evaluate('a := 1; b := 2; 1 + b')).to eq(3)
   end
@@ -67,6 +67,14 @@ describe Kalc::Interpreter do
     it { expect(evaluate('FALSE')).to eq(false) }
     it { expect(evaluate('FALSE || TRUE')).to eq(true) }
     it { expect(evaluate('FALSE && TRUE')).to eq(false) }
+    it { expect(evaluate('flag := FALSE; flag')).to eq(false) }
+
+    it 'short-circuits infix logical operators' do
+      expect(evaluate('FALSE && SYSTEM("echo nope")')).to eq(false)
+      expect(evaluate('TRUE || SYSTEM("echo nope")')).to eq(true)
+      expect(evaluate('FALSE and SYSTEM("echo nope")')).to eq(false)
+      expect(evaluate('TRUE or SYSTEM("echo nope")')).to eq(true)
+    end
   end
 
   context 'Decimal numbers' do
@@ -77,6 +85,25 @@ describe Kalc::Interpreter do
     it { expect(evaluate('1.2 - 1.0')).to eq(0.2) }
     it { expect(evaluate('1.01 = 1.01')).to eq(true) }
     it { expect(evaluate('1.01 = 1.02')).to eq(false) }
+  end
+
+  context 'Array literals' do
+    it 'evaluates vertical lists' do
+      expect(evaluate('[1; 2; 3]').rows).to eq([[1], [2], [3]])
+    end
+
+    it 'evaluates rectangular tables' do
+      expect(evaluate('["name", "score"; "Ada", 98]').rows).to eq([%w[name score], ['Ada', 98]])
+    end
+
+    it 'recalculates array formulas lazily' do
+      expect(evaluate(<<~KALC)).to eq(21)
+        price := 1
+        items := [price; price + 1]
+        price := 10
+        SUM(items)
+      KALC
+    end
   end
 
   context 'Ternary' do
@@ -134,8 +161,133 @@ describe Kalc::Interpreter do
     it { expect(evaluate('ROUND(233.256,-2)')).to eq(200) }
   end
 
+  context 'Excel compatibility functions' do
+    it { expect(evaluate('AVERAGE(2, 4, 6)')).to eq(4) }
+    it { expect(evaluate('COUNT(1, "x", TRUE, 2)')).to eq(2) }
+    it { expect(evaluate('COUNTIF([1; 2; 3; 4], ">=3")')).to eq(2) }
+    it { expect(evaluate('COUNTIF(["001"; "002"], "001")')).to eq(1) }
+    it { expect(evaluate('COUNTA(1, "", FALSE, "x")')).to eq(4) }
+    it { expect(evaluate('MOD(10, 3)')).to eq(1) }
+    it { expect(evaluate('QUOTIENT(-10, 3)')).to eq(-3) }
+    it { expect(evaluate('POWER(2, 5)')).to eq(32) }
+    it { expect(evaluate('INT(-3.1)')).to eq(-4) }
+    it { expect(evaluate('ROUNDUP(3.141, 2)')).to eq(3.15) }
+    it { expect(evaluate('ROUNDDOWN(-3.149, 2)')).to eq(-3.14) }
+    it { expect(evaluate('MROUND(10, 4)')).to eq(12) }
+    it { expect(evaluate('SIGN(-10)')).to eq(-1) }
+    it { expect(evaluate('SIGN(0)')).to eq(0) }
+    it { expect(evaluate('PI()')).to eq(Math::PI) }
+    it { expect(evaluate('FIND("c", "abc")')).to eq(3) }
+    it { expect(evaluate('SEARCH("C", "abc")')).to eq(3) }
+    it { expect(evaluate('SUBSTITUTE("banana", "a", "o", 2)')).to eq('banona') }
+    it { expect(evaluate('SUMIF([10; 20; 30; 40], ">=30")')).to eq(70) }
+    it { expect(evaluate('SUMIF(["001"; "002"], "001", [5; 10])')).to eq(5) }
+    it { expect(evaluate('TEXTJOIN("-", TRUE, "a", "", "b")')).to eq('a-b') }
+    it { expect(evaluate('IFS(1 > 2, "no", 2 > 1, "yes")')).to eq('yes') }
+    it { expect(evaluate('CHOOSE(2, "alpha", "beta", "gamma")')).to eq('beta') }
+    it { expect(evaluate('SWITCH(2, 1, "one", 2, "two", "other")')).to eq('two') }
+
+    it 'returns an integer in the requested RANDBETWEEN range' do
+      value = evaluate('RANDBETWEEN(3, 5)')
+
+      expect(value).to be_between(3, 5)
+      expect(value % 1).to eq(0)
+    end
+  end
+
+  context 'Array functions' do
+    it { expect(evaluate('SUM([10; 20; 30])')).to eq(60) }
+    it { expect(evaluate('AVERAGE([1, 2; 3, 4])')).to eq(2.5) }
+    it { expect(evaluate('COUNT([1; "x"; TRUE; 2])')).to eq(2) }
+    it { expect(evaluate('COUNTA([1; ""; FALSE; "x"])')).to eq(4) }
+    it { expect(evaluate('MATCH("Grace", ["Ada"; "Grace"; "Katherine"])')).to eq(2) }
+    it { expect(evaluate('MATCH(25, [10; 20; 30], 1)')).to eq(2) }
+    it { expect(evaluate('MATCH(15, [10; 20; 30], -1)')).to eq(2) }
+    it { expect(evaluate('TEXTJOIN("-", TRUE, ["a"; ""; "b"])')).to eq('a-b') }
+    it { expect(evaluate('CONCATENATE(["Ada"; " "; "Lovelace"])')).to eq('Ada Lovelace') }
+    it { expect(evaluate('ROWS(["name", "score"; "Ada", 98])')).to eq(2) }
+    it { expect(evaluate('COLUMNS([1, 2, 3])')).to eq(3) }
+    it { expect(evaluate('INDEX([10; 20; 30], 2)')).to eq(20) }
+    it { expect(evaluate('INDEX(["name", "score"; "Ada", 98], 2, 2)')).to eq(98) }
+    it { expect(evaluate('TRANSPOSE([1; 2; 3])').rows).to eq([[1, 2, 3]]) }
+    it { expect(evaluate('UNIQUE([1; 1; 2; 2; 3])').rows).to eq([[1], [2], [3]]) }
+    it { expect(evaluate('SORT([3; 1; 2])').rows).to eq([[1], [2], [3]]) }
+    it { expect(evaluate('FILTER([10; 20; 30], [FALSE; TRUE; TRUE])').rows).to eq([[20], [30]]) }
+    it { expect(evaluate('SEQUENCE(2, 3, 1, 1)').rows).to eq([[1, 2, 3], [4, 5, 6]]) }
+
+    it 'looks up a scalar from a vector' do
+      expect(evaluate('XLOOKUP("Grace", ["Ada"; "Grace"; "Katherine"], [98; 100; 99])')).to eq(100)
+    end
+
+    it 'supports approximate xlookup matches' do
+      expect(evaluate('XLOOKUP(15, [10; 20; 30], ["low"; "mid"; "high"], "missing", 1)')).to eq('mid')
+      expect(evaluate('XLOOKUP(15, [10; 20; 30], ["low"; "mid"; "high"], "missing", -1)')).to eq('low')
+    end
+
+    it 'keeps xlookup configuration errors visible even with if_not_found' do
+      expect { evaluate('XLOOKUP("Grace", ["Ada"; "Grace"], [1], "missing")') }
+        .to raise_error(ArgumentError, /same length/)
+
+      expect { evaluate('XLOOKUP(1, [1; 2], [10; 20], "missing", 99)') }
+        .to raise_error(ArgumentError, /match mode/)
+    end
+
+    it 'looks up a row from a table' do
+      result = evaluate('XLOOKUP("Grace", ["Ada"; "Grace"], ["engineer", 98; "scientist", 100])')
+
+      expect(result.rows).to eq([['scientist', 100]])
+    end
+
+    it 'rejects mismatched sumif shapes' do
+      expect { evaluate('SUMIF(["a", "x"; "x", "a"], "x", [1; 2; 3; 4])') }
+        .to raise_error(ArgumentError, /same shape/)
+    end
+
+    it 'raises clearly when unique has no results' do
+      expect { evaluate('UNIQUE([1; 1], FALSE, TRUE)') }
+        .to raise_error(ArgumentError, /UNIQUE returned no results/)
+    end
+  end
+
+  context 'Lazy formulas' do
+    it 'detects circular references' do
+      expect { evaluate('a := a + 1') }
+        .to raise_error(Kalc::CircularReferenceError, /Circular reference detected for a/)
+    end
+  end
+
+  context 'Function calls' do
+    it 'evaluates arguments in the caller scope' do
+      expect(evaluate(<<~KALC)).to eq(10)
+        x := 10
+        DEFINE IDENTITY_PAIR(x, y) {
+          y
+        }
+        IDENTITY_PAIR(1, x)
+      KALC
+    end
+
+    it 'keeps builtin value errors visible' do
+      expect { evaluate('RIGHT("abc", "x")') }
+        .to raise_error(ArgumentError, /invalid value for Integer/)
+    end
+  end
+
+  context 'Unary operations' do
+    it 'does not evaluate operands twice when they fail' do
+      error = nil
+
+      expect do
+        evaluate('-(PUTS("x"))')
+      rescue StandardError => e
+        error = e
+      end.to output("x\n").to_stdout
+
+      expect(error).to be_a(NoMethodError)
+    end
+  end
+
   # https://github.com/mrcsparker/kalc/issues/9
-  # https://github.com/kschiess/parslet/issues/126
   context 'empty strings' do
     it { expect(evaluate('""')).to eq('') }
     it { expect(evaluate('var1 := 1; var2 := 2; IF(var1=var2,"","ERROR")')).to eq('ERROR') }
@@ -145,8 +297,6 @@ describe Kalc::Interpreter do
   private
 
   def evaluate(expression)
-    g = @grammar.parse(expression)
-    ast = @transform.apply(g)
-    Kalc::Interpreter.new.run(ast)
+    Kalc::Interpreter.new.run(@grammar.parse(expression))
   end
 end

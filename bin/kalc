@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+# Executes a Kalc program from a file path passed on the command line.
+
 kalc_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(kalc_dir) unless $LOAD_PATH.include?(kalc_dir)
 

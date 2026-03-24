@@ -1,0 +1,6 @@
+schedule := [
+  "Mon", "Tue", "Wed", "Thu";
+  "Parse", "Spec", "Ship", "Rest"
+]
+
+TRANSPOSE(schedule)

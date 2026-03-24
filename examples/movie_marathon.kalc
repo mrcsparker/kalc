@@ -1,0 +1,15 @@
+titles := ["Solaris"; "Spirited Away"; "Arrival"; "Knives Out"; "Dune"]
+genres := ["scifi"; "fantasy"; "scifi"; "mystery"; "scifi"]
+runtimes := [99; 125; 116; 130; 155]
+
+headliner := INDEX(titles, MATCH("Arrival", titles))
+
+CONCATENATE(
+  "Headliner: ",
+  headliner,
+  " / sci-fi films: ",
+  COUNTIF(genres, "scifi"),
+  " / sci-fi runtime: ",
+  FIXED(SUMIF(genres, "scifi", runtimes), 0, TRUE),
+  " min"
+)

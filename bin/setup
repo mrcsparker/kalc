@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Installs the configured toolchain and gem dependencies for local development.
+
+set -euo pipefail
+
+if command -v mise >/dev/null 2>&1; then
+  mise install
+fi
+
+bundle check || bundle install

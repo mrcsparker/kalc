@@ -1,0 +1,29 @@
+DEFINE LETTER_GRADE(score) {
+  IF(
+    score >= 90,
+    "A",
+    IF(
+      score >= 80,
+      "B",
+      IF(score >= 70, "C", IF(score >= 60, "D", "F"))
+    )
+  )
+}
+
+'student name' := "ada lovelace"
+'midterm score' := 88
+'project score' := 97
+'final exam score' := 91
+
+weighted_average :=
+  ('midterm score' * 0.30) +
+  ('project score' * 0.40) +
+  ('final exam score' * 0.30)
+
+CONCATENATE(
+  PROPER('student name'),
+  " finished with ",
+  FIXED(weighted_average, 2, TRUE),
+  "% and earned a ",
+  LETTER_GRADE(weighted_average)
+)

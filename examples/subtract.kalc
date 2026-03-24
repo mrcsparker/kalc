@@ -1,1 +1,4 @@
-100 - 10
+starting_balance := 100
+withdrawal := 10
+
+FIXED(starting_balance - withdrawal, 0, TRUE)

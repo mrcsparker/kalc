@@ -1,1 +1,4 @@
-1+1
+left := 21
+right := 21
+
+FIXED(left + right, 0, TRUE)

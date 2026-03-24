@@ -1,14 +1,6 @@
 require 'spec_helper'
 
-class Kalc::Stdlib
-end
-
-describe Kalc::Stdlib do
-  before(:each) do
-    @grammar = Kalc::Grammar.new
-    @transform = Kalc::Transform.new
-  end
-
+describe 'stdlib builtins' do
   describe 'PLUS_ONE' do
     it { expect(evaluate('PLUS_ONE(1)')).to eq(2) }
     it { expect(evaluate('PLUS_ONE(101)')).to eq(102) }

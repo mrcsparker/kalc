@@ -1,0 +1,23 @@
+hero := "juniper"
+class_name := CHOOSE(3, "bard", "ranger", "wizard", "alchemist")
+zone_code := "ice"
+zone_name := SWITCH(
+  zone_code,
+  "forest", "Emerald Woods",
+  "ice", "Glass Glacier",
+  "desert", "Sunfall Dunes",
+  "Unknown"
+)
+level := 14
+threat := XLOOKUP(level, [1; 5; 10; 15], ["gentle"; "lively"; "dangerous"; "mythic"], "unknown", -1)
+
+CONCATENATE(
+  PROPER(hero),
+  " the ",
+  PROPER(class_name),
+  " enters ",
+  zone_name,
+  " facing a ",
+  threat,
+  " threat."
+)

@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+# Opens an IRB session with a ready-to-use Kalc runner.
+
+require 'bundler/setup'
+require 'irb'
+require 'kalc'
+
+runner = Kalc::Runner.new
+
+puts 'Kalc console loaded.'
+puts 'Available objects: runner'
+
+IRB.setup(nil)
+workspace = binding
+ARGV.clear
+IRB::Irb.new(workspace).run(IRB.conf)

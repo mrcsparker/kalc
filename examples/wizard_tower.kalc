@@ -1,0 +1,14 @@
+beds := [FIB(5); FIB(6); FIB(7); FIB(8)]
+
+CONCATENATE(
+  "Crystal tower beds: ",
+  FIXED(INDEX(beds, 1), 0, TRUE),
+  ", ",
+  FIXED(INDEX(beds, 2), 0, TRUE),
+  ", ",
+  FIXED(INDEX(beds, 3), 0, TRUE),
+  ", ",
+  FIXED(INDEX(beds, 4), 0, TRUE),
+  " / total seeds: ",
+  FIXED(SUM(beds), 0, TRUE)
+)
