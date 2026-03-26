@@ -88,7 +88,13 @@ functions return other Ruby numerics where that makes sense.
 TRUE
 FALSE
 "hello"
+"She said ""hello"""
 ```
+
+String literals follow Excel-style quoting rules. To include a `"` inside a
+string, double it as `""`. Backslashes are treated as ordinary characters, so
+line breaks should be produced with helpers such as `CHAR(10)` rather than
+`\n`.
 
 ### Arithmetic and Conditionals
 
