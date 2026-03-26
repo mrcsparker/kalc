@@ -273,6 +273,36 @@ describe Kalc::Interpreter do
     end
   end
 
+  context 'String functions' do
+    it 'returns an empty string for zero-length left and right slices' do
+      expect(evaluate('LEFT("abc", 0)')).to eq('')
+      expect(evaluate('RIGHT("abc", 0)')).to eq('')
+    end
+
+    it 'rejects negative slice lengths' do
+      expect { evaluate('LEFT("abc", -1)') }
+        .to raise_error(ArgumentError, /LEFT count must be non-negative/)
+      expect { evaluate('RIGHT("abc", -1)') }
+        .to raise_error(ArgumentError, /RIGHT count must be non-negative/)
+    end
+
+    it 'rejects invalid one-based positions' do
+      expect { evaluate('MID("abc", 0, 1)') }
+        .to raise_error(ArgumentError, /MID position must be at least 1/)
+      expect { evaluate('REPLACE("abc", 0, 1, "X")') }
+        .to raise_error(ArgumentError, /REPLACE position must be at least 1/)
+      expect { evaluate('FIND("a", "abc", 0)') }
+        .to raise_error(ArgumentError, /FIND position must be at least 1/)
+      expect { evaluate('SEARCH("a", "abc", 0)') }
+        .to raise_error(ArgumentError, /SEARCH position must be at least 1/)
+    end
+
+    it 'keeps VALUE in BigDecimal space' do
+      expect(evaluate('VALUE("0.1")')).to eq(BigDecimal('0.1'))
+      expect(evaluate('VALUE("0.1") + VALUE("0.2")')).to eq(BigDecimal('0.3'))
+    end
+  end
+
   context 'Unary operations' do
     it 'does not evaluate operands twice when they fail' do
       error = nil
@@ -314,6 +344,8 @@ describe Kalc::Interpreter do
   # https://github.com/mrcsparker/kalc/issues/9
   context 'empty strings' do
     it { expect(evaluate('""')).to eq('') }
+    it { expect(evaluate('"a""b"')).to eq('a"b') }
+    it { expect(evaluate('"line\\nnext"')).to eq('line\\nnext') }
     it { expect(evaluate('var1 := 1; var2 := 2; IF(var1=var2,"","ERROR")')).to eq('ERROR') }
     it { expect(evaluate('var1 := 1; var2 := 1; IF(var1=var2,"","ERROR")')).to eq('') }
   end

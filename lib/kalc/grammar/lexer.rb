@@ -143,7 +143,10 @@ module Kalc
         Token.new(type: :number, value: number, position: position)
       end
 
-      # Reads a double-quoted string literal.
+      # Reads an Excel-style double-quoted string literal.
+      #
+      # Embedded quotes are written as "" inside the string. Backslashes are
+      # treated as ordinary characters rather than escape prefixes.
       #
       # @return [String]
       def read_string
@@ -155,15 +158,15 @@ module Kalc
 
           char = @scanner.getch
 
-          if char == '\\'
-            buffer << char
-            raise parse_error('Unterminated string literal') if @scanner.eos?
+          if char == '"'
+            if @scanner.peek(1) == '"'
+              @scanner.getch
+              buffer << '"'
+              next
+            end
 
-            buffer << @scanner.getch
-            next
+            break
           end
-
-          break if char == '"'
 
           buffer << char
         end

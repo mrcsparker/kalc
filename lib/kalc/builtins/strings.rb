@@ -35,7 +35,7 @@ module Kalc
         Helpers.define_eager(env, :FIXED) do |value, decimal_places, no_commas|
           fixed_decimal(value, decimal_places, no_commas)
         end
-        Helpers.define_eager(env, :LEFT) { |value, count| value[0..(Integer(count) - 1)] }
+        Helpers.define_eager(env, :LEFT) { |value, count| left_substring(value, count) }
         Helpers.define_eager(env, :LEN, &:length)
         Helpers.define_eager(env, :LOWER, &:downcase)
         Helpers.define_eager(env, :MID) do |value, start_position, count|
@@ -46,7 +46,7 @@ module Kalc
           replace_substring(value, start_position, count, new_text)
         end
         Helpers.define_eager(env, :REPT) { |value, count| value * Integer(count) }
-        Helpers.define_eager(env, :RIGHT) { |value, count| value[-Integer(count)..] }
+        Helpers.define_eager(env, :RIGHT) { |value, count| right_substring(value, count) }
         Helpers.define_eager(env, :SEARCH) do |needle, haystack, start_position = 1|
           search_in_string(haystack, needle, start_position)
         end
@@ -58,7 +58,7 @@ module Kalc
         end
         Helpers.define_eager(env, :TRIM, &:strip)
         Helpers.define_eager(env, :UPPER, &:upcase)
-        Helpers.define_eager(env, :VALUE, &:to_f)
+        Helpers.define_eager(env, :VALUE) { |value| BigDecimal(value.to_s) }
       end
 
       # Formats a number using a fixed number of decimal places.
@@ -77,10 +77,23 @@ module Kalc
       # @param starting_pos [Numeric]
       # @return [Integer]
       def find_in_string(haystack, needle, starting_pos)
-        index = haystack[(Integer(starting_pos) - 1)..].index(needle)
+        start = one_based_position(starting_pos, :FIND) - 1
+        index = haystack[start..]&.index(needle)
         raise ArgumentError, "Unable to find #{needle.inspect} in #{haystack.inspect}" unless index
 
-        index + Integer(starting_pos)
+        index + start + 1
+      end
+
+      # Returns the leftmost characters from a string.
+      #
+      # @param value [String]
+      # @param count [Numeric]
+      # @return [String]
+      def left_substring(value, count)
+        length = non_negative_count(count, :LEFT)
+        return '' if length.zero?
+
+        value[0, length]
       end
 
       # Formats a number with optional thousands separators.
@@ -103,9 +116,11 @@ module Kalc
       # @param count [Numeric]
       # @return [String, nil]
       def middle_of_string(value, start_position, count)
-        start = Integer(start_position) - 1
-        length = Integer(count) - 1
-        value[start..(start + length)]
+        start = one_based_position(start_position, :MID) - 1
+        length = non_negative_count(count, :MID)
+        return '' if length.zero?
+
+        value[start, length] || ''
       end
 
       # Replaces a slice of text using Excel-style one-based positions.
@@ -116,11 +131,25 @@ module Kalc
       # @param new_text [String]
       # @return [String]
       def replace_substring(value, start_position, count, new_text)
-        output = value.dup
-        start = Integer(start_position) - 1
-        length = Integer(count) - 1
-        output[start..(start + length)] = new_text
-        output
+        start = one_based_position(start_position, :REPLACE) - 1
+        length = non_negative_count(count, :REPLACE)
+
+        prefix = value[0, start] || value
+        suffix = value[(start + length)..] || ''
+        prefix + new_text + suffix
+      end
+
+      # Returns the rightmost characters from a string.
+      #
+      # @param value [String]
+      # @param count [Numeric]
+      # @return [String]
+      def right_substring(value, count)
+        length = non_negative_count(count, :RIGHT)
+        return '' if length.zero?
+        return value if length >= value.length
+
+        value[-length, length]
       end
 
       # Case-insensitive version of {#find_in_string}.
@@ -130,11 +159,11 @@ module Kalc
       # @param start_position [Numeric]
       # @return [Integer]
       def search_in_string(haystack, needle, start_position)
-        start = Integer(start_position) - 1
-        index = haystack.downcase[start..].index(needle.downcase)
+        start = one_based_position(start_position, :SEARCH) - 1
+        index = haystack.downcase[start..]&.index(needle.downcase)
         raise ArgumentError, "Unable to find #{needle.inspect} in #{haystack.inspect}" unless index
 
-        index + Integer(start_position)
+        index + start + 1
       end
 
       # Replaces all or one occurrence of a substring.
@@ -167,6 +196,30 @@ module Kalc
         Helpers.scalar_values(values)
                .reject { |value| ignore_empty && (value.nil? || value == '') }
                .join(delimiter.to_s)
+      end
+
+      # Coerces a string position into a one-based integer.
+      #
+      # @param position [Numeric]
+      # @param function_name [String, Symbol]
+      # @return [Integer]
+      def one_based_position(position, function_name)
+        offset = Integer(position)
+        raise ArgumentError, "#{function_name} position must be at least 1" if offset < 1
+
+        offset
+      end
+
+      # Coerces a count argument into a non-negative integer.
+      #
+      # @param count [Numeric]
+      # @param function_name [String, Symbol]
+      # @return [Integer]
+      def non_negative_count(count, function_name)
+        length = Integer(count)
+        raise ArgumentError, "#{function_name} count must be non-negative" if length.negative?
+
+        length
       end
     end
   end

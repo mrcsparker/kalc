@@ -121,6 +121,7 @@ describe Kalc::Grammar do
   context 'Quoted identifiers and strings' do
     it { expect(grammar).to parse("'Hello world' := 1; 'Hello world' + 2") }
     it { expect(grammar).to parse('IF(TRUE, "", "ERROR")') }
+    it { expect(grammar).to parse('TEXTJOIN("", FALSE, "a""b", "c")') }
   end
 
   context 'Array literals' do
